@@ -1,0 +1,59 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    People
+{% endblock %}
+
+{% block main %}
+<h1>People</h1>
+<br>
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Location</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for person in people %}
+        <tr>
+            <td>
+                {{ person['name'] }}
+            </td>
+            <td>
+                {{ person['location'] }}
+            </td>
+            <td>
+                {{ person['description'] }}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<hr>
+<h3>Add People</h3>
+<br>
+<form action="/people" method="post">
+    <p>Character Name</p>
+    <div class="form-group">
+        <input autocomplete="off" autofocus class="form-control" id="name" name="name" placeholder="Name" type="text">
+    </div>
+    <br>
+    <p>Character Location</p>
+    <div class="form-group">
+        <select style="color:grey" id="place" class="form-control" name="place">
+        <option disabled="" selected="" value="">Location</option>
+        {% for place in places %}
+            <option value="{{ place['name'] }}">{{ place['name'] }}</option>
+        {% endfor %}
+        </select>
+    </div>
+    <br>
+    <p>Character Description</p>
+    <textarea id="description" name="description" rows="6" cols="40"></textarea>
+    <br>
+    <button class="btn btn-primary" type="submit">Add Person</button>
+</form>
+{% endblock %}

@@ -1,0 +1,47 @@
+INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL
+INTEGER NOT NULL
+TEXT NOT NULL
+VARCHAR(255) NOT NULL
+datetime DEFAULT CURRENT_TIMESTAMP
+FOREIGN KEY(named) REFERENCES tablename(name)
+
+
+CREATE TABLE 'users' ('id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'username' VARCHAR(255) NOT NULL, 'hash' TEXT NOT NULL, 'activecampaign_id' INTEGER);
+
+CREATE TABLE 'activity' ('activity_id' integer PRIMARY KEY AUTOINCREMENT NOT NULL, 'user_id' integer NOT NULL, 'timestamp' timestamp DEFAULT CURRENT_TIMESTAMP, 'action' VARCHAR(255),
+FOREIGN KEY(user_id) REFERENCES users(id));
+
+CREATE TABLE 'campaigns' ('campaign_id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'name' VARCHAR(255) NOT NULL, 'codeword' VARCHAR(255) NOT NULL);
+
+CREATE TABLE 'parties' ('membership_id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'campaign_id' INTEGER NOT NULL, 'user_id' INTEGER NOT NULL, 'role' VARCHAR(255),
+FOREIGN KEY(campaign_id) REFERENCES campaigns(campaign_id));user
+
+CREATE TABLE 'characters' ('character_id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'user_id' INTEGER, 'campaign_id' INTEGER, 'name' VARCHAR(255) NOT NULL, 'description' TEXT, 'location' DEFAULT 'travelling',
+FOREIGN KEY(user_id) REFERENCES users(id), FOREIGN KEY(campaign_id) REFERENCES campaigns(campaign_id));
+
+CREATE TABLE 'places' ('place_id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'name' VARCHAR(255) NOT NULL, 'campaign_id' INTEGER, 'description' TEXT, 'type' VARCHAR(255), 
+FOREIGN KEY(campaign_id) REFERENCES campaigns(campaign_id));
+
+CREATE TABLE 'items' ('item_id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'name' VARCHAR(255) NOT NULL, 'campaign_id' INTEGER, 'place_id' INTEGER, 'wielder' INTEGER, 'description', 
+FOREIGN KEY(campaign_id) REFERENCES campaigns(campaign_id), FOREIGN KEY(place_id) REFERENCES places(place_id));
+
+CREATE TABLE 'quests' ('quest_id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'name' VARCHAR(255) NOT NULL, 'campaign_id' INTEGER, 'place_id' INTEGER, 'char_id' INTEGER, 'description' TEXT, 
+FOREIGN KEY(campaign_id) REFERENCES campaigns(campaign_id));
+
+CREATE TABLE 'notes' ('note_id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'campaign_id' INTEGER, 'subject_id' INTEGER NOT NULL, 'note' TEXT NOT NULL, 'user_id' INTEGER NOT NULL, 'timestamp' timestamp DEFAULT CURRENT_TIMESTAMP, 
+FOREIGN KEY(campaign_id) REFERENCES campaigns(campaign_id));
+
+CREATE TABLE 'feedback' ('feedback_id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'note' TEXT NOT NULL, 'user_id' INTEGER, 'timestamp' timestamp DEFAULT CURRENT_TIMESTAMP);
+
+
+
+
+
+FUTURE IMPLEMENTATION
+CREATE TABLE 'bonds' ('bond_id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'subject_id' INTEGER NOT NULL, 'object_id' INTEGER NOT NULL);
+
+CREATE TABLE 'grudges' ('grudge_id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'subject_id' INTEGER NOT NULL, 'object_id' INTEGER NOT NULL);
+
+
+
+INFO:  max size of TEXT field = 65535 characters

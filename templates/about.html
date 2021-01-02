@@ -1,0 +1,87 @@
+{% extends "layout.html" %}
+
+{% block title %}
+About the Developer
+{% endblock %}
+
+{% block main %}
+
+<h1>About the Application</h1>
+<p class="about">
+    This site uses a relational database to collaboratively build a compendium of
+    all the people, places, and things that animate a role-playing campaign setting.
+</p>
+<p class="about">
+    Players and Game Masters can join their own shared campaign in which everyone
+    views the index of notable entries as their home page, and anyone can add new information.
+</p>
+<br>
+<h2>SQL</h2>
+<p class="about">
+    Databases were established using <a href="https://www.sqlite.org/index.html">sqlite3</a> from the Linux terminal.
+    Error checking and adjusments were made utilizing <a href=https://www.phpliteadmin.org/>phpLiteAdmin</a>.
+</p>
+<p class="about">
+    This database currently has tables for users, campaigns, parties, characters, places, items, quests, notes, and feedback.
+</p>
+<br>
+<h2>Flask</h2>
+<p class="about">
+    The <a href="https://flask.palletsprojects.com/en/1.1.x/">Flask</a> microframework utilizes
+    <a href="https://docs.python.org/3/">Python 3</a> and
+    <a href="https://jinja.palletsprojects.com/en/2.11.x/">Jinja</a> to dynamicaly generate HTML.
+</p>
+<br>
+<h2>JavaScript</h2>
+<p class="about">
+    Interactivity, such as buttons that remain disabled until valid reponses are given, is made possible through <a href="https://www.javascript.com/">JavaScript</a>
+</p>
+<br>
+<h2>Future Development</h2>
+<ul class="mylist" style="width:65%">
+    <li>
+        Migration out of CS50 sandbox
+    </li>
+    <li>
+        Interactive virtual dice roller
+    </li>
+    <li>
+        Entry appendation and alteration
+    </li>
+    <li>
+        Importation of external "chat logs" to automatically populate database
+    </li>
+    <li>
+        Timeline functionality
+    </li>
+    <li>
+        Virtual Tabletop integration
+    </li>
+</ul>
+<br>
+<br>
+<br>
+<h1>About the Developer</h1>
+<br>
+<h2>Travis Turk</h2>
+<p class="about">
+    Hospitality administration and project management professional, 2015-2020
+</p>
+<p class="about">
+    Completed an introdution to the fundamentals of Computer Science through <a href="https://www.edx.org/">edX</a>
+    presentation of Harvard's <a href="https://cs50.harvard.edu/">CS50</a>, a course that:
+    <blockquote>
+        "...teaches students how to think algorithmically and solve problems efficiently.
+        Topics include abstraction, algorithms, data structures, encapsulation, resource management,
+        security, software engineering, and web programming.
+        Languages include C, Python, and SQL plus HTML, CSS, and JavaScript."
+    </blockquote>
+</p>
+<p class="about">This site was developed as a solo final project submission for CS50.</p>
+
+<br>
+<h2>Contact</h2>
+<h6>
+    Twitter: <a href="https://twitter.com/turkosaurus">@Turkosaurus</a> | Email: <a href="mailto:travisturk@gmail.com">travisturk@gmail.com</a>
+</h6>
+{% endblock %}

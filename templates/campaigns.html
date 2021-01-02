@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Campaigns
+{% endblock %}
+
+{% block main %}
+<h6>Active Campaign</h6>
+<h1>{{ active[0]['name'] }}</h1>
+<br>
+<a href="/">
+<button id="continue" name="continue" class="btn btn-primary" type="button" style="width:300px">Continue to {{ active[0]['name'] }}</button>
+</a>
+<hr>
+<a href="/joincampaign">
+<button id="join" name="join" class="btn btn-primary" type="button" style="width:300px">Join existing campaign</button>
+</a>
+<hr>
+<a href="/newcampaign">
+<button id="start" name="start" class="btn btn-primary" type="button" style="width:300px">Start new campaign</button>
+</a>
+<hr>
+<hr>
+<h6>Change active campaign</h6>
+<form action="/campaigns" method="post">
+    <div class="form-group">
+        <select style="color:grey" id="change_campaign" class="form-control" name="change_campaign">
+        <option disabled="" selected="" value="">Change Campaign</option>
+        {% for campaign in campaigns %}
+            <option value="{{ campaign['name'] }}">{{ campaign['name'] }}</option>
+        {% endfor %}
+        </select>
+        <button style="vertical-align:top" id="submit" class="btn btn-primary" type="submit" disabled>Go</button>
+    </div>
+</form>
+<br>
+
+<script>
+    document.querySelector('#change_campaign').oninput = function () {
+        if (document.querySelector('#change_campaign').value === '') {
+            document.querySelector('#submit').disabled = true;
+        } else {
+            if (document.querySelector('#change_campaign').value > 0) {
+                document.querySelector('#submit').disabled = true;
+            } else {
+            document.querySelector('#submit').disabled = false;
+            }
+        }
+    }
+</script>
+{% endblock %}

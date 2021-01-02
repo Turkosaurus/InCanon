@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Home
+{% endblock %}
+
+{% block main %}
+<h1>{{ campaign[0]['name'] }}</h1>
+<h6>Codeword:  {{ campaign[0]['codeword'] }}</h6>
+<br>
+<h3>Players</h3>
+<ul class="mylist">
+    {% for person in players %}
+    <li>{{ person['username'] }}</li>
+    {% endfor %}
+</ul>
+<br>
+<h3>Characters</h3>
+<ul class="mylist">
+    {% for person in people %}
+    <li>{{ person['name'] }}</li>
+    {% endfor %}
+</ul>
+<br>
+<h3>Places</h3>
+<ul class="mylist">
+    {% for place in places %}
+    <li>{{ place['name'] }}</li>
+    {% endfor %}
+</ul>
+<br>
+<h3>Items</h3>
+<ul class="mylist">
+    {% for item in items %}
+    <li>{{ item['name'] }}</li>
+    {% endfor %}
+</ul>
+<br>
+<h3>Quests</h3>
+<ul class="mylist">
+    {% for quest in quests %}
+    <li>{{ quest['name'] }}</li>
+    {% endfor %}
+</ul>
+
+{% endblock %}

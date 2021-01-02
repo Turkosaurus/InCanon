@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Register
+{% endblock %}
+
+{% block main %}
+    <h3>{{ errmsg }}</h3>
+    <h3>Create an account to get started.</h3>
+    <br>
+    <p>InCanon helps tell stories by cataloging important details.</p>
+    <p>Everyone can contribute.</p>
+    <br>
+    <form action="/register" method="post">
+        <div class="form-group">
+            <input autocomplete="off" style="color:grey" autofocus class="form-control" name="username" placeholder="Username" type="text">
+        </div>
+        <div class="form-group">
+            <input class="form-control" style="color:grey" name="password" placeholder="Password" type="password">
+        </div>
+        <div class="form-group">
+            <input class="form-control" style="color:grey" name="passwordconfirm" placeholder="Password (confirm)" type="password">
+        </div>
+        <button class="btn btn-primary" type="submit">Register</button>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <h5>Privacy</h5>
+        <p>Expressly for the purposes of development and testing, the following user data is kept:</p>
+        <ul style="max-width:400px;text-align:left;margin:auto" >
+            <li>Username</li>
+            <li>Timestamped login and logout activity</li>
+            <li>Contributions are preserved with user attribution</li>
+        </ul>
+        <br>
+        <p>User passwords are not stored.</p>
+        <p>User data is never shared.</p>
+    </form>
+{% endblock %}

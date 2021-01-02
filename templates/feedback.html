@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Feedback
+{% endblock %}
+
+{% block main %}
+<h1>Thank you for visiting.</h1>
+<p>Feedback helps the site improve.</p>
+
+<!--<label for="feedback">Input:</label>-->
+<form action="/feedback" method="post">
+<textarea id="feedback" name="feedback" rows="6" cols="40">
+</textarea>
+  <br><br>
+  <button class="btn btn-primary" type="submit">Send Feedback</button>
+</form>
+{% endblock %}

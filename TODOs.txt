@@ -1,0 +1,15 @@
+TODO
+csv -> db
+viewer
+editor
+dark mode
+menus
+error page
+feedback page
+
+
+FEATURES ADDITIONAL
+search of timeline
+
+
+CREDITS

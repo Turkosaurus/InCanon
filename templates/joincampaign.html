@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Join Campaign
+{% endblock %}
+
+{% block main %}
+    <h1>Join Campaign</h1>
+    <br>
+    <form action="/joincampaign" method="post">
+
+        <h6>Campaign</h6>
+        <div class="form-group">
+            <select style="color:grey" id="joincampaign" class="form-control" name="joincampaign">
+            <option disabled="" selected="" value="">Choose Campaign</option>
+            {% for campaign in campaigns %}
+                <option value="{{ campaign['name'] }}">{{ campaign['name'] }}</option>
+            {% endfor %}
+            </select>
+        </div>
+
+        <h6>Codeword</h6>
+        <div class="form-group">
+            <input id="codeword" autocomplete="off" autofocus class="form-control" name="codeword" placeholder="codeword" type="text">
+        </div>
+
+        <button id="submit" class="btn btn-primary" type="submit">Join</button>
+    </form>
+{% endblock %}

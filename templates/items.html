@@ -1,0 +1,59 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Items
+{% endblock %}
+
+{% block main %}
+<h1>Items</h1>
+<br>
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <!--<th>Location</th>-->
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in items %}
+        <tr>
+            <td>
+                {{ item['name'] }}
+            </td>
+            <!--<td>-->
+            <!--    {{ item['place_id'] }}-->
+            <!--</td>-->
+            <td>
+                {{ item['description'] }}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<hr>
+<h3>Add Items</h3>
+<br>
+<form action="/items" method="post">
+    <p>Item Name</p>
+    <div class="form-group">
+        <input autocomplete="off" autofocus class="form-control" id="name" name="name" placeholder="Name" type="text">
+    </div>
+    <br>
+    <p>Item Location</p>
+    <div class="form-group">
+        <select style="color:grey" id="place" class="form-control" name="place">
+        <option disabled="" selected="" value="">Location</option>
+        {% for place in places %}
+            <option value="{{ place['name'] }}">{{ place['name'] }}</option>
+        {% endfor %}
+        </select>
+    </div>
+    <br>
+    <p>Item Description</p>
+    <textarea id="description" name="description" rows="6" cols="40"></textarea>
+    <br>
+    <button class="btn btn-primary" type="submit">Add Item</button>
+</form>
+{% endblock %}

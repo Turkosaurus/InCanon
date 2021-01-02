@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+
+{% block title %}
+New Campaign
+{% endblock %}
+
+{% block main %}
+<h3>Start New Campaign</h3>
+<br>
+<form action="/newcampaign" method="post">
+    <p>Campaign Name</p>
+    <div class="form-group">
+        <input autocomplete="off" autofocus class="form-control" id="name" name="name" placeholder="Name" type="text">
+    </div>
+    <br>
+    <p>Codeword</p>
+    <div class="form-group">
+        <input autocomplete="off" autofocus class="form-control" id="codeword" name="codeword" placeholder="Codeword" type="text">
+    </div>
+    <p>Codewords ensure that only invitees can join.</p>
+    <br>
+    <button class="btn btn-primary" type="submit">Start Campaign</button>
+</form>
+{% endblock %}

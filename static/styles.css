@@ -1,0 +1,111 @@
+navbar
+{
+    color: white;
+    background-color: black;
+}
+
+nav .navbar-brand
+{
+    /* size for brand */
+    font-size: xx-large;
+    /*color: white;*/
+    /*background-color: black;*/
+}
+
+ /*colors for brand */
+nav .navbar-brand
+{
+    color: white;
+}
+
+main .form-control
+{
+    /* center form controls */
+    display: inline-block;
+
+    /* override Bootstrap's 100% width for form controls */
+    width: auto;
+
+    /* set color */
+    color: black;
+    background-color: black;
+}
+
+body
+{
+    /* set color */
+    color: white;
+    background-color: black;
+}
+
+main
+{
+    /* scroll horizontally as needed */
+    overflow-x: auto;
+
+    /* center contents */
+    text-align: center;
+
+    /* set color */
+    color: white;
+    background-color: black;
+
+}
+
+p.about
+{
+    text-align: left;
+}
+
+main img
+{
+    /* constrain images on small screens */
+    max-width: 100%;
+    /*background-color: black;*/
+}
+
+thead, th {
+    text-align: center;
+}
+
+table, tbody, td
+{
+    text-align: left;
+    padding: 8px;
+    margin: auto;
+}
+
+input[type=text] {
+  background-color: black;
+  color: white;
+}
+
+input[type=option] {
+  background-color: black;
+  color: white;
+}
+
+input[type=select] {
+  background-color: black;
+  color: white;
+}
+
+select {
+    color: grey;
+}
+
+ul.mylist {
+    width: 250px;
+    margin: auto;
+    text-align: left;
+}
+
+code {
+    text-align: left;
+}
+
+/*ul*/
+/*{*/
+/*    margin: auto;*/
+/*    width: 200px;*/
+/*}*/
