@@ -29,8 +29,12 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
+# Use local sqlite database
+# db = SQL("sqlite:///canon.db")
+
 # Configure CS50 Library to use Heroku Postgres database
-db = SQL(os.getenv("postgres://uzornqjuopsjzw:67ae935d2a75ef23a0a6e76f024d69b8395fd767393e698db385759ef3522669@ec2-52-6-75-198.compute-1.amazonaws.com:5432/d5caoim8jh2tj9"))
+db = SQL(os.geteven("postgres://uzornqjuopsjzw:67ae935d2a75ef23a0a6e76f024d69b8395fd767393e698db385759ef3522669@ec2-52-6-75-198.compute-1.amazonaws.com:5432/d5caoim8jh2tj9"))
+
 
 
 """ Campaign Functions """
