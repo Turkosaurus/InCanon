@@ -1,0 +1,49 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Roll
+{% endblock %}
+
+{% block main %}
+<h1>Roll</h1>
+<h6>Results</h6>
+{% for total in totals %}
+{{ total }}
+{% endfor %}
+<br>
+<hr>
+<hr>
+<h6>Quantity</h6>
+<form action="/roll" method="post">
+    <div class="form-group">
+        <input style="color:grey" autocomplete="off" autofocus class="form-control" id="qty" name="qty" placeholder="Quantity" type="number">
+        <select style="color:grey" id="die"  name="die" class="form-control">
+        <option disabled="" selected="" value="">Die</option>
+            <option value="20">d20</option>
+            <option value="12">d12</option>
+            <option value="10">d10</option>
+            <option value="6">d6</option>
+            <option value="4">d4</option>
+            <option value="2">d2</option>
+            <option value="100">d100</option>
+        </select>
+        <input style="color:grey" autocomplete="off" autofocus class="form-control" id="mod" name="mod" placeholder="modifier" type="number">
+        <button style="vertical-align:top" id="submit" class="btn btn-primary" type="submit" disabled>Go</button>
+</form>
+
+<br>
+
+<script>
+    document.querySelector('#die').oninput = function () {
+        if (document.querySelector('#die').value === '') {
+            document.querySelector('#submit').disabled = true;
+        } else {
+            if (document.querySelector('#die').value < 2) {
+                document.querySelector('#submit').disabled = true;
+            } else {
+            document.querySelector('#submit').disabled = false;
+            }
+        }
+    }
+</script>
+{% endblock %}

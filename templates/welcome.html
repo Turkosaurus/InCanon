@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Welcome
+{% endblock %}
+
+{% block main %}
+<h1>Welcome, {{ users[0]['username'] }}</h1>
+<p>No active campaign detected.</p>
+<br>
+<p>
+    Join existing an campaign using the codeword provided by your party or GM, or start your own new campaign.
+</p>
+<br>
+<a href="/joincampaign">
+<button id="join" name="join" class="btn btn-primary" type="button" style="width:300px">Join existing campaign</button>
+</a>
+<hr>
+<a href="/newcampaign">
+<button id="start" name="start" class="btn btn-primary" type="button" style="width:300px">Start new campaign</button>
+</a>
+{% endblock %}
