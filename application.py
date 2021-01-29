@@ -1,4 +1,5 @@
 import os
+import random
 
 from cs50 import SQL
 from flask import Flask, flash, jsonify, redirect, render_template, request, session
@@ -30,10 +31,10 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 # Use local sqlite database
-# db = SQL("sqlite:///canon.db")
+db = SQL("sqlite:///canon.db")
 
 # Configure CS50 Library to use Heroku Postgres database
-db = SQL(os.geteven("postgres://uzornqjuopsjzw:67ae935d2a75ef23a0a6e76f024d69b8395fd767393e698db385759ef3522669@ec2-52-6-75-198.compute-1.amazonaws.com:5432/d5caoim8jh2tj9"))
+# db = SQL(os.geteven("postgres://uzornqjuopsjzw:67ae935d2a75ef23a0a6e76f024d69b8395fd767393e698db385759ef3522669@ec2-52-6-75-198.compute-1.amazonaws.com:5432/d5caoim8jh2tj9"))
 
 
 
@@ -237,6 +238,7 @@ def quests():
 """ Administrative Functions """
 
 
+""" Navigation """
 @app.route("/campaigns", methods=["GET", "POST"])
 @login_required
 def campaigns():
@@ -261,8 +263,9 @@ def campaigns():
         # print(f"campaigns: {campaigns}")
         # print(active)
 
+        # If user has no active campaign
         if not active:
-            return redirect("/campaigns")
+            return render_template("welcome.html", users=users)
 
         else:
             return render_template("campaigns.html", campaigns=campaigns, active=active)
@@ -357,22 +360,7 @@ def joincampaign():
             return redirect("/")
 
 
-@app.route("/feedback", methods=["GET", "POST"])
-def feedback():
-    if request.method == 'GET':
-        return render_template("feedback.html")
-
-    # When feedback is submitted on 'POST'
-    else:
-        feedback = request.form.get("feedback")
-
-        # TODO capture user name when feedback is given from logged in users
-        # Not logged in
-        db.execute("INSERT INTO feedback (note) VALUES (:feedback)",
-                    feedback=feedback)
-        return render_template("thankyou.html")
-
-
+""" Login, etc """
 @app.route("/register", methods=["GET", "POST"])
 def register():
     """Register user"""
@@ -456,16 +444,11 @@ def login():
 
 
         # Redirect user to home page
-        return redirect("/campaigns")
+        return redirect("/")
 
     # User reached route via GET (as by clicking a link or via redirect)
     else:
         return render_template("login.html")
-
-
-@app.route("/about")
-def about():
-    return render_template("about.html")
 
 
 @app.route("/logout")
@@ -482,6 +465,77 @@ def logout():
     return redirect("/")
 
 
+""" Miscellaneous """
+@app.route("/feedback", methods=["GET", "POST"])
+def feedback():
+    if request.method == 'GET':
+        return render_template("feedback.html")
+
+    # When feedback is submitted on 'POST'
+    else:
+        feedback = request.form.get("feedback")
+
+        # TODO capture user name when feedback is given from logged in users
+        # Not logged in
+        db.execute("INSERT INTO feedback (note) VALUES (:feedback)",
+                    feedback=feedback)
+        return render_template("thankyou.html")
+
+
+@app.route("/about")
+def about():
+    return render_template("about.html")
+
+
+@app.route("/roll", methods=["GET", "POST"])
+def roll():
+
+    # Display dice roll page on GET
+    if request.method == 'GET':
+        return render_template("roll.html")
+
+    if request.method == 'POST':
+        qty = request.form.get("qty")
+        die = request.form.get("die")
+        mod = request.form.get("mod")
+
+    # Set qty to 1 if none given, else make int
+    if not qty:
+        qty = 1
+    else:
+        qty = int(qty)
+
+    # Set mod to 0 if none given, else make int
+    if not mod:
+        mod = 0
+    else:
+        mod = int(mod)
+
+    # Initalize list for all rolls and totals including mods
+    rolls = []
+    totals = []
+
+    # Loop once for each die roll
+    for i in range(qty):
+        print(rolls)
+        print(totals)
+        # Append roll result to list
+        rolls.append(random.randint(1, die))
+
+        # Add modifier, append to totals list
+        total = rolls[i] + mod
+        totals.append(total)
+
+        # Testing, print results
+        print(f"Roll {i}: {rolls[i]} + {mod} = {rolls[i] + mod}")
+
+    return render_template("roll.html", rolls=rolls, totals=totals, mod=mod)
+
+
+
+
+
+""" Error handling """
 def errorhandler(e):
     """Handle error"""
     if not isinstance(e, HTTPException):
