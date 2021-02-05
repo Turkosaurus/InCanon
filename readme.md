@@ -1,5 +1,6 @@
 # InCanon #
-###### RPG notebook for players and GMs ######
+RPG notebook for players and GMs
+Began as final project for CS50x - Introduction to Computer Science
 
 ---
 
@@ -35,5 +36,4 @@ already been populated with some real game data.
     - timeline search
 - Dice roller
 - Option to seed db with CSV information
-
 
