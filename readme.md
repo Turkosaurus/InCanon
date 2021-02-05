@@ -1,6 +1,7 @@
 # InCanon #
-RPG notebook for players and GMs
-Began as final project for CS50x - Introduction to Computer Science
+##### RPG notebook for players and GMs #####
+
+**Began as final project for CS50x - Introduction to Computer Science**
 
 ---
 
