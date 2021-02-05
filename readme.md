@@ -1,5 +1,6 @@
 # InCanon #
-### RPG notebook for players and GMs ###
+###### RPG notebook for players and GMs ######
+
 ---
 
 ## Summary ##
@@ -12,3 +13,9 @@ views the index of notable entries as their home page, and anyone can add new in
 
 Schema are available on scratchpad.txt, and several campaigns have
 already been populated with some real game data.
+
+## Technologies Used ##
+
+- Flask
+- SQLite3
+- Python
