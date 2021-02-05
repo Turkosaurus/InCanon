@@ -5,7 +5,7 @@
 ## Summary ##
 
 "InCanon" uses a relational database to collaboratively build a compendium of
-all the people, places, and things that animate a role-playing campaign setting.
+all the people, places, items, and quests that animate a role-playing campaign setting.
 
 Players and Game Masters can join their own shared campaign in which everyone
 views the index of notable entries as their home page, and anyone can add new information.
