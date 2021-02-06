@@ -38,6 +38,37 @@ db = SQL("sqlite:///canon.db")
 
 
 
+""" Database Helper Functions """
+def get_ac_id():
+    # Query for active campaign
+    return db.execute("SELECT activecampaign_id FROM users WHERE id=:user_id", user_id=session["user_id"])
+
+def get_people():
+    # Get active campaign's ID
+    ac_id = get_ac_id()
+    # Select all characters in active campaign
+    return db.execute("SELECT * FROM characters WHERE campaign_id=:ac_id", ac_id=ac_id[0]['activecampaign_id'])
+
+def get_places():
+    # Get active campaign's ID
+    ac_id = get_ac_id()
+    # Select all places in active campaign
+    return db.execute("SELECT * FROM places WHERE campaign_id=:ac_id", ac_id=ac_id[0]['activecampaign_id'])
+
+def get_items():
+    # Get active campaign's ID
+    ac_id = get_ac_id()
+    # Select all items in active campaign
+    return db.execute("SELECT * FROM items WHERE campaign_id=:ac_id", ac_id=ac_id[0]['activecampaign_id'])
+
+def get_quests():
+    # Get active campaign's ID
+    ac_id = get_ac_id()
+    # Select all quests in active campaign
+    return db.execute("SELECT * FROM quests WHERE campaign_id=:ac_id", ac_id=ac_id[0]['activecampaign_id'])
+
+
+
 """ Campaign Functions """
 @app.route("/")
 @login_required
@@ -46,6 +77,7 @@ def index():
     # Identify user data
     user = db.execute("SELECT * FROM users WHERE id=:user_id", user_id=session["user_id"])
 
+    # TODO replace with get_campaign()?
     # Get active campaign name
     campaign = db.execute("SELECT * FROM campaigns WHERE campaign_id=:active",
                                 active=user[0]['activecampaign_id'])
@@ -55,20 +87,13 @@ def index():
         return redirect("/campaigns")
 
     else:
+
         # Request current campaign's data
-        # Query for current players
-
-        # Query for active campaign
-        ac_id = db.execute("SELECT activecampaign_id FROM users WHERE id=:user_id", user_id=session["user_id"])
-        # Select all characters in active campaign
-        people = db.execute("SELECT * FROM characters WHERE campaign_id=:ac_id", ac_id=ac_id[0]['activecampaign_id'])
-        # Select all places in active campaign
-        places = db.execute("SELECT * FROM places WHERE campaign_id=:ac_id", ac_id=ac_id[0]['activecampaign_id'])
-        # Select all items in active campaign
-        items = db.execute("SELECT * FROM items WHERE campaign_id=:ac_id", ac_id=ac_id[0]['activecampaign_id'])
-        # Select all quests in active campaign
-        quests = db.execute("SELECT * FROM quests WHERE campaign_id=:ac_id", ac_id=ac_id[0]['activecampaign_id'])
-
+        ac_id = get_ac_id()
+        people = get_people()
+        places = get_places()
+        items = get_items()
+        quests = get_quests()
 
         # Select all players in active campaign for display
         players = db.execute("SELECT * FROM users WHERE id IN (SELECT user_id FROM parties WHERE campaign_id=:ac_id)",
@@ -84,16 +109,10 @@ def people():
     if request.method == 'GET':
 
         # Request current campaign's data
-        # Query for active campaign
-        ac_id = db.execute("SELECT activecampaign_id FROM users WHERE id=:user_id", user_id=session["user_id"])
-        # Select all characters in active campaign
-        people = db.execute("SELECT * FROM characters WHERE campaign_id=:ac_id", ac_id=ac_id[0]['activecampaign_id'])
-        # Select all places in active campaign
-        places = db.execute("SELECT * FROM places WHERE campaign_id=:ac_id", ac_id=ac_id[0]['activecampaign_id'])
-        # Select all items in active campaign
-        items = db.execute("SELECT * FROM items WHERE campaign_id=:ac_id", ac_id=ac_id[0]['activecampaign_id'])
-        # Select all quests in active campaign
-        quests = db.execute("SELECT * FROM quests WHERE campaign_id=:ac_id", ac_id=ac_id[0]['activecampaign_id'])
+        people = get_people()
+        places = get_places()
+        items = get_items()
+        quests = get_quests()
 
         # Render people page
         return render_template("people.html", people=people, places=places, items=items, quests=quests)
@@ -123,16 +142,10 @@ def places():
     if request.method == 'GET':
 
         # Request current campaign's data
-        # Query for active campaign
-        ac_id = db.execute("SELECT activecampaign_id FROM users WHERE id=:user_id", user_id=session["user_id"])
-        # Select all characters in active campaign
-        people = db.execute("SELECT * FROM characters WHERE campaign_id=:ac_id", ac_id=ac_id[0]['activecampaign_id'])
-        # Select all places in active campaign
-        places = db.execute("SELECT * FROM places WHERE campaign_id=:ac_id", ac_id=ac_id[0]['activecampaign_id'])
-        # Select all items in active campaign
-        items = db.execute("SELECT * FROM items WHERE campaign_id=:ac_id", ac_id=ac_id[0]['activecampaign_id'])
-        # Select all quests in active campaign
-        quests = db.execute("SELECT * FROM quests WHERE campaign_id=:ac_id", ac_id=ac_id[0]['activecampaign_id'])
+        people = get_people()
+        places = get_places()
+        items = get_items()
+        quests = get_quests()
 
         # Render people page
         return render_template("places.html", people=people, places=places, items=items, quests=quests)
@@ -161,16 +174,10 @@ def items():
     if request.method == 'GET':
 
         # Request current campaign's data
-        # Query for active campaign
-        ac_id = db.execute("SELECT activecampaign_id FROM users WHERE id=:user_id", user_id=session["user_id"])
-        # Select all characters in active campaign
-        people = db.execute("SELECT * FROM characters WHERE campaign_id=:ac_id", ac_id=ac_id[0]['activecampaign_id'])
-        # Select all places in active campaign
-        places = db.execute("SELECT * FROM places WHERE campaign_id=:ac_id", ac_id=ac_id[0]['activecampaign_id'])
-        # Select all items in active campaign
-        items = db.execute("SELECT * FROM items WHERE campaign_id=:ac_id", ac_id=ac_id[0]['activecampaign_id'])
-        # Select all quests in active campaign
-        quests = db.execute("SELECT * FROM quests WHERE campaign_id=:ac_id", ac_id=ac_id[0]['activecampaign_id'])
+        people = get_people()
+        places = get_places()
+        items = get_items()
+        quests = get_quests()
 
         # Render people page
         return render_template("items.html", people=people, places=places, items=items, quests=quests)
@@ -202,17 +209,10 @@ def quests():
     if request.method == 'GET':
 
         # Request current campaign's data
-        # Query for active campaign
-        ac_id = db.execute("SELECT activecampaign_id FROM users WHERE id=:user_id", user_id=session["user_id"])
-        # Select all characters in active campaign
-        people = db.execute("SELECT * FROM characters WHERE campaign_id=:ac_id", ac_id=ac_id[0]['activecampaign_id'])
-        # Select all places in active campaign
-        places = db.execute("SELECT * FROM places WHERE campaign_id=:ac_id", ac_id=ac_id[0]['activecampaign_id'])
-        # Select all items in active campaign
-        items = db.execute("SELECT * FROM items WHERE campaign_id=:ac_id", ac_id=ac_id[0]['activecampaign_id'])
-        # Select all quests in active campaign
-        quests = db.execute("SELECT * FROM quests WHERE campaign_id=:ac_id", ac_id=ac_id[0]['activecampaign_id'])
-        print(quests)
+        people = get_people()
+        places = get_places()
+        items = get_items()
+        quests = get_quests()
 
         # Render people page
         return render_template("quests.html", people=people, places=places, items=items, quests=quests)
@@ -512,9 +512,9 @@ def roll():
         mod = int(mod)
 
     # Initalize list for all rolls and totals including mods
+
     rolls = []
     totals = []
-
     # Loop once for each die roll
     for i in range(qty):
         print(rolls)
@@ -530,8 +530,6 @@ def roll():
         print(f"Roll {i}: {rolls[i]} + {mod} = {rolls[i] + mod}")
 
     return render_template("roll.html", rolls=rolls, totals=totals, mod=mod)
-
-
 
 
 

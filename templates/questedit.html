@@ -13,7 +13,6 @@
             <th>Name</th>
             <th>Location</th>
             <th>Description</th>
-            <th>Edit Quest</th>
         </tr>
     </thead>
     <tbody>
@@ -28,20 +27,17 @@
             <td>
                 {{ quest['description'] }}
             </td>
-            <td>
-                <button class="btn btn-primary" type="submit">Edit</button>
-            </td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
 <hr>
-<h3>Add a New Quest</h3>
+<h3>Add Quests</h3>
 <br>
 <form action="/quests" method="post">
     <p>Quest Name</p>
     <div class="form-group">
-        <input required autocomplete="off" autofocus class="form-control" id="name" name="name" placeholder="Name" type="text">
+        <input autocomplete="off" autofocus class="form-control" id="name" name="name" placeholder="Name" type="text">
     </div>
     <br>
     <p>Quest Location</p>

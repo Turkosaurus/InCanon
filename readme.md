@@ -6,7 +6,6 @@ Began as final project for CS50x - Introduction to Computer Science
 ---
 
 ## Summary
-
 "InCanon" uses a relational database to collaboratively build a compendium of
 all the people, places, items, and quests that animate a role-playing campaign setting.
 
@@ -16,8 +15,17 @@ views the index of notable entries as their home page, and anyone can add new in
 Schema are available on scratchpad.txt, and several campaigns have
 already been populated with some real game data.
 
-## Technologies Used
+## Features
+- Security minded design
+    - users protected by not storing passwords, only hashed values
+    - database protected by sanitizing inputs to guard against SQL injection attacks
 
+- Persistent Database
+    - user data
+    - campaign data
+    - site feedback
+
+## Technologies Used
 - Flask
 - SQLite3
 - Python
@@ -27,7 +35,7 @@ already been populated with some real game data.
 # TODOs
 
 ## Bugs
-- Place association handling need to be updated
+- Place association handling need to be updated in some routes of application.py or the corresponding templates
 
 ## Needed Impovements
 - Ablity to edit existing information
@@ -35,8 +43,14 @@ already been populated with some real game data.
     2. people
     3. the rest
 
-## Feature Requests
+## Upcoming & Feature Requests
+- Bonds and Grudges
+- Dice roller
+- Import bulk data into campaign
+    - seed new campaign with CSV data (alternately, expand new campaign creation pages)
+    - external "chat logs"
+
+## Someday Maybe
 - Live timeline of events
     - timeline search
-- Dice roller
-- Option to seed db with CSV information
+- Virtual Tabletop environment integration

@@ -1,9 +1,5 @@
-Heroku Postgres :: Database
-URI: postgres://uzornqjuopsjzw:67ae935d2a75ef23a0a6e76f024d69b8395fd767393e698db385759ef3522669@ec2-52-6-75-198.compute-1.amazonaws.com:5432/d5caoim8jh2tj9
-db = SQL(os.getenv("postgres://uzornqjuopsjzw:67ae935d2a75ef23a0a6e76f024d69b8395fd767393e698db385759ef3522669@ec2-52-6-75-198.compute-1.amazonaws.com:5432/d5caoim8jh2tj9"))
-
-
-
+# Components
+(for construction)
 INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL
 INTEGER NOT NULL
 TEXT NOT NULL
@@ -12,6 +8,7 @@ datetime DEFAULT CURRENT_TIMESTAMP
 FOREIGN KEY(named) REFERENCES tablename(name)
 
 
+# Schema
 CREATE TABLE 'users' ('id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'username' VARCHAR(255) NOT NULL, 'hash' TEXT NOT NULL, 'activecampaign_id' INTEGER);
 
 CREATE TABLE 'activity' ('activity_id' integer PRIMARY KEY AUTOINCREMENT NOT NULL, 'user_id' integer NOT NULL, 'timestamp' timestamp DEFAULT CURRENT_TIMESTAMP, 'action' VARCHAR(255),
