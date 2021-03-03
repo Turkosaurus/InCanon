@@ -52,31 +52,32 @@ db = SQL(os.getenv('DATABASE_URL'))
 """ Database Helper Functions """
 def get_ac_id():
     # Query for active campaign
-    return db.execute("SELECT activecampaign_id FROM users WHERE id=:user_id", user_id=session["user_id"])
+    tmp = db.execute("SELECT activecampaign_id FROM users WHERE id=:user_id", user_id=session["user_id"])
+    return tmp[0]['activecampaign_id']
 
 def get_people():
     # Get active campaign's ID
     ac_id = get_ac_id()
     # Select all characters in active campaign
-    return db.execute("SELECT * FROM characters WHERE campaign_id=:ac_id", ac_id=ac_id[0]['activecampaign_id'])
+    return db.execute("SELECT * FROM characters WHERE campaign_id=:ac_id", ac_id=ac_id)
 
 def get_places():
     # Get active campaign's ID
     ac_id = get_ac_id()
     # Select all places in active campaign
-    return db.execute("SELECT * FROM places WHERE campaign_id=:ac_id", ac_id=ac_id[0]['activecampaign_id'])
+    return db.execute("SELECT * FROM places WHERE campaign_id=:ac_id", ac_id=ac_id)
 
 def get_items():
     # Get active campaign's ID
     ac_id = get_ac_id()
     # Select all items in active campaign
-    return db.execute("SELECT * FROM items WHERE campaign_id=:ac_id", ac_id=ac_id[0]['activecampaign_id'])
+    return db.execute("SELECT * FROM items WHERE campaign_id=:ac_id", ac_id=ac_id)
 
 def get_quests():
     # Get active campaign's ID
     ac_id = get_ac_id()
     # Select all quests in active campaign
-    return db.execute("SELECT * FROM quests WHERE campaign_id=:ac_id", ac_id=ac_id[0]['activecampaign_id'])
+    return db.execute("SELECT * FROM quests WHERE campaign_id=:ac_id", ac_id=ac_id)
 
 
 
@@ -109,7 +110,7 @@ def index():
 
         # Select all players in active campaign for display
         players = db.execute("SELECT * FROM users WHERE id IN (SELECT user_id FROM parties WHERE campaign_id=:ac_id)",
-                            ac_id=ac_id[0]['activecampaign_id'])
+                            ac_id=ac_id)
 
         # Render campaign summary page
         return render_template("index.html", campaign=campaign, people=people, places=places, items=items, quests=quests, players=players)
@@ -138,12 +139,12 @@ def people():
         description = request.form.get("description")
 
         # Query for active campaign
-        ac_id = db.execute("SELECT activecampaign_id FROM users WHERE id=:user_id", user_id=session["user_id"])
+        ac_id = get_ac_id()
 
         # Insert given data
         db.execute("INSERT INTO characters (campaign_id, name, location, description) \
                     VALUES (:ac_id, :name, :location, :description)",
-                    ac_id=ac_id[0]['activecampaign_id'], name=name, location=place, description=description)
+                    ac_id=ac_id, name=name, location=place, description=description)
 
         return redirect("/people")
 
@@ -174,7 +175,7 @@ def places():
 
         # Insert given data
         db.execute("INSERT INTO places (name, campaign_id, description) VALUES (:name, :ac_id, :description)",
-                    name=name, ac_id=ac_id[0]['activecampaign_id'], description=description)
+                    name=name, ac_id=ac_id, description=description)
 
         return redirect("/places")
 
@@ -203,18 +204,17 @@ def items():
         description = request.form.get("description")
 
         # Query for active campaign
-        ac_id = db.execute("SELECT activecampaign_id FROM users WHERE id=:user_id", user_id=session["user_id"])
+        ac_id = get_ac_id()
 
         # Insert given data
         # todo rename location to acknowledge foreign key relationship
         db.execute("INSERT INTO items (name, campaign_id, description) \
                     VALUES (:name, :ac_id, :description)",
-                    name=name, ac_id=ac_id[0]['activecampaign_id'], description=description)
+                    name=name, ac_id=ac_id, description=description)
 
         return redirect("/items")
 
-
-#TODO correct place_id and location name errors
+#TODO place name handling based on string, not id
 @app.route("/quests", methods=["GET", "POST"])
 @login_required
 def quests():
@@ -226,8 +226,6 @@ def quests():
         items = get_items()
         quests = get_quests()
 
-        print(session)
-
         # Render people page
         return render_template("quests.html", people=people, places=places, items=items, quests=quests)
 
@@ -236,17 +234,46 @@ def quests():
 
         # Capture submitted responses
         name = request.form.get("name")
-        place = request.form.get("place")
+        place_name = request.form.get("place")
         description = request.form.get("description")
 
         # Query for active campaign
-        ac_id = db.execute("SELECT activecampaign_id FROM users WHERE id=:user_id", user_id=session["user_id"])
+        ac_id = get_ac_id()
 
         # Insert given data
-        db.execute("INSERT INTO quests (name, campaign_id, place_id, description) VALUES (:name, :ac_id, :place_id, :description)",
-                    name=name, ac_id=ac_id[0]['activecampaign_id'], place_id=place, description=description)
+        db.execute("INSERT INTO quests (name, campaign_id, place_name, description) VALUES (:name, :ac_id, :place_name, :description)",
+                    name=name, ac_id=ac_id, place_name=place_name, description=description)
 
         return redirect("/quests")
+
+
+
+""" Edit Entry """
+@app.route("/questedit/<int:quest>/", methods=["GET", "POST"])
+@login_required
+def questedit(quest):
+    if request.method == 'GET':
+        print(quest)        
+        return render_template("error.html", errcode=420)
+    else:
+        # Query for editable information
+                # Request current campaign's data
+        people = get_people()
+        places = get_places()
+        items = get_items()
+        tmp = db.execute("SELECT * FROM quests WHERE quest_id=:quest", quest=quest) 
+        return render_template("questedit.html", quest=tmp[0], people=people, places=places, items=items)
+
+# @app.route("/questedit/<int:quest>/", methods=["POST"])
+# @login_required
+# def questedit(quest):
+#     # When post request is made 
+#     if request.method == 'POST':
+#         print(quest)        
+#         return render_template("questedit.html", quest=quest)
+#     else:
+#         return render_template("error.html", errcode=420)
+
 
 
 

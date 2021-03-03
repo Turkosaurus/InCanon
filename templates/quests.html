@@ -11,7 +11,7 @@
     <thead>
         <tr>
             <th>Name</th>
-            <th>Location</th>
+            <th>Place</th>
             <th>Description</th>
             <th>Edit Quest</th>
         </tr>
@@ -23,13 +23,15 @@
                 {{ quest['name'] }}
             </td>
             <td>
-                {{ quest['place_id'] }}
+                {{ quest['place_name'] }}
             </td>
             <td>
                 {{ quest['description'] }}
             </td>
             <td>
-                <button class="btn btn-primary" type="submit">Edit</button>
+                <form action="/questedit/{{ quest['quest_id'] }}/" method="post">
+                    <button class="btn btn-primary" type="submit" id="{{ quest['quest_id'] }}" name="{{ quest['quest_id'] }}">Edit</button>
+                </form>
             </td>
         </tr>
         {% endfor %}

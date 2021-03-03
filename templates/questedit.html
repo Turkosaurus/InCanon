@@ -1,46 +1,16 @@
 {% extends "layout.html" %}
-
 {% block title %}
-    Quests
+    Edit Quest
 {% endblock %}
 
 {% block main %}
-<h1>Quests</h1>
-<br>
-<table>
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Location</th>
-            <th>Description</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for quest in quests %}
-        <tr>
-            <td>
-                {{ quest['name'] }}
-            </td>
-            <td>
-                {{ quest['place_id'] }}
-            </td>
-            <td>
-                {{ quest['description'] }}
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-<hr>
-<h3>Add Quests</h3>
-<br>
-<form action="/quests" method="post">
+<form action="/update/quest" method="post">
     <p>Quest Name</p>
     <div class="form-group">
-        <input autocomplete="off" autofocus class="form-control" id="name" name="name" placeholder="Name" type="text">
+        <input autocomplete="off" autofocus class="form-control" id="name" name="name" placeholder="{{ quest['name'] }}" type="text">
     </div>
     <br>
-    <p>Quest Location</p>
+    <p>Quest Location (currently: {{ quest['place_name'] }})</p>
     <div class="form-group">
         <select style="color:grey" id="place" class="form-control" name="place">
         <option disabled="" selected="" value="">Location</option>
@@ -50,9 +20,15 @@
         </select>
     </div>
     <br>
-    <p>Quest Description</p>
-    <textarea id="description" name="description" rows="6" cols="40"></textarea>
+    <p>Edit Quest Description</p>
+    <textarea id="description" name="description" placeholder="{{ quest['description']}}"rows="6" cols="40"></textarea>
     <br>
-    <button class="btn btn-primary" type="submit">Add Quest</button>
+    <button class="btn btn-primary" type="submit">Save Changes</button>
+</form>
+<hr>
+<form action="/delete/quest">
+    <button class="btn btn-primary" type="submit">
+        Delete Quest
+    </button>
 </form>
 {% endblock %}
