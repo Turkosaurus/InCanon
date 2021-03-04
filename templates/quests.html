@@ -13,14 +13,15 @@
             <th>Name</th>
             <th>Place</th>
             <th>Description</th>
-            <th>Edit Quest</th>
         </tr>
     </thead>
     <tbody>
         {% for quest in quests %}
         <tr>
             <td>
-                {{ quest['name'] }}
+                <a href="/more/quest/{{ quest['name'] }}">
+                    {{ quest['name'] }}
+                </a>
             </td>
             <td>
                 {{ quest['place_name'] }}
@@ -28,16 +29,12 @@
             <td>
                 {{ quest['description'] }}
             </td>
-            <td>
-                <form action="/questedit/{{ quest['quest_id'] }}/" method="post">
-                    <button class="btn btn-primary" type="submit" id="{{ quest['quest_id'] }}" name="{{ quest['quest_id'] }}">Edit</button>
-                </form>
-            </td>
-        </tr>
+        </tr>   
         {% endfor %}
     </tbody>
 </table>
 <hr>
+<br>
 <h3>Add a New Quest</h3>
 <br>
 <form action="/quests" method="post">

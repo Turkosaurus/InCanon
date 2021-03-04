@@ -1,0 +1,67 @@
+{% extends "layout.html" %}
+{% block title %}
+    Detail
+{% endblock %}
+
+{% block main %}
+<h6>More Detail</h6>
+<h1>{{ selection }}</h1>
+<br>
+{% if quest %}
+<!-- for quest in quests? -->
+<p>
+    Name:
+    {{ quest[0]['name'] }}    
+</p>
+<p>
+    Place:
+    {{ quest[0]['place_name'] }}
+</p>
+<p>
+    Description:
+    {{ quest[0]['description'] }}
+</p>
+{% endif %}
+<!-- <form action="/update/quest" method="post">
+    <p>Quest Name</p>
+    <div class="form-group">
+        <input autocomplete="off" autofocus class="form-control" id="name" name="name" placeholder="{{ quest[0]['name'] }}" type="text">
+    </div>
+    <br>
+    <p>Change Location (currently: {{ quest[0]['place_name'] }})</p>
+    <div class="form-group">
+        <select style="color:grey" id="place" class="form-control" name="place">
+        <option disabled="" selected="" value="">Location</option>
+        {% for place in places %}
+            <option value="{{ place['name'] }}">{{ place['name'] }}</option>
+        {% endfor %}
+        </select>
+    </div>
+    <br>
+    <p>Overwrit Description</p>
+    <textarea id="description" name="description" placeholder="{{ quest[0]['description']}}"rows="6" cols="40"></textarea>
+    <br>
+    <button class="btn btn-primary" type="submit">Save Changes</button>
+</form> -->
+<hr>
+<button class="btn btn-primary" disabled>Submit Changes</button>
+<br>
+<br>
+<button class="btn btn-primary" onclick="goBack()">Go Back</button>
+<br>
+<br>
+<br>
+<form action="/delete/quest/{{ quest[0]['name'] }}">
+    <button class="btn btn-danger" type="submit" onclick="return confirm('Delete {{ quest[0]['name'] }} forever?')">
+        Delete
+    </button>
+</form>
+
+<script>
+function goBack() {
+  window.history.back();
+}
+</script>
+
+
+{% endblock %}

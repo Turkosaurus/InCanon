@@ -1,7 +1,7 @@
 # InCanon
 RPG notebook for players and GMs
 
-Began as final project for CS50x - Introduction to Computer Science
+Based, in part, on final submission to CS50x
 
 ---
 
@@ -12,13 +12,12 @@ all the people, places, items, and quests that animate a role-playing campaign s
 Players and Game Masters can join their own shared campaign in which everyone
 views the index of notable entries as their home page, and anyone can add new information.
 
-Schema are available on scratchpad.txt, and several campaigns have
-already been populated with some real game data.
+Database schema are available on scratchpad.txt.
 
 ## Features
-- Security minded design
-    - users protected by not storing passwords, only hashed values
-    - database protected by sanitizing inputs to guard against SQL injection attacks
+- Security
+    - passwords only stored as hashed values, never plaintext
+    - input sanitation to guard against SQL injection attacks
 
 - Persistent Database
     - user data
@@ -27,15 +26,20 @@ already been populated with some real game data.
 
 ## Technologies Used
 - Flask
-- SQLite3
-- Python
+    - Python
+    - WSGI
+    - Gunicorn
+
+- Database
+    - Sqlite3
+    - Postgres 
 
 ---
 
 # TODOs
 
 ## Bugs
-- Place association handling need to be updated in some routes of application.py or the corresponding templates
+- ~~Place association handling need to be updated in some routes of application.py or the corresponding templates~~
 
 ## Needed Impovements
 - Ablity to edit existing information
