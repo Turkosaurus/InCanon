@@ -165,8 +165,8 @@ def places():
         description = request.form.get("description")
 
         # Query for active campaign
-        ac_id = db.execute("SELECT activecampaign_id FROM users WHERE id=:user_id", user_id=session["user_id"])
-
+        ac_id = get_ac_id()
+        
         # Insert given data
         db.execute("INSERT INTO places (name, campaign_id, description) VALUES (:name, :ac_id, :description)",
                     name=name, ac_id=ac_id, description=description)
