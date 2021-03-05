@@ -5,10 +5,20 @@
 {% endblock %}
 
 {% block main %}
-<h1>Error</h1>
-<img src="/static/fail.jpg" alt="d20 on a 1" height="200" width="200">
-<h1>{{ errcode }}</h1>
-<p>
-    {{ errmsg }}
-</p>
+<container>
+    <div class="row justify-content-center">        
+        <h1>Error {{ errcode }}</h1>
+    </div>
+    <div class="row justify-content-center">        
+        <h5>
+            {{ errmsg }}
+        </h5>
+    </div>
+    <div class="row justify-content-center">        
+        <div class="col-md-4 col-sm-8">
+        <div>        
+            <img src="/static/fail.jpg" class="img-fluid rounded" alt="d20 on a 1">
+        </div>    
+    </div>
+</container>
 {% endblock %}

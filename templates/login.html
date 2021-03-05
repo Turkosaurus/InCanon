@@ -5,15 +5,24 @@
 {% endblock %}
 
 {% block main %}
-    <h3>Log In</h3>
-    <br>
-    <form action="/login" method="post">
-        <div class="form-group">
-            <input autocomplete="off" autofocus class="form-control" name="username" placeholder="Username" type="text">
+<container>
+    <div class="row">
+        <h1>Log In</h1>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col-md-4">
+            <form action="/login" method="post">
+                <div class="form-group">
+                    <input autocomplete="off" autofocus class="form-control" name="username" placeholder="Username" type="text">
+                </div>
+                <div class="form-group">
+                    <input class="form-control" name="password" placeholder="Password" type="password">
+                </div>
+                <button class="btn btn-primary" type="submit">Log In</button>
+                <small id="register" class="form-text text-muted">Need an account? <a href="/register">Register</a> now.</small>
+            </form>        
         </div>
-        <div class="form-group">
-            <input class="form-control" name="password" placeholder="Password" type="password">
-        </div>
-        <button class="btn btn-primary" type="submit">Log In</button>
-    </form>
+    </div>
+</container>
 {% endblock %}

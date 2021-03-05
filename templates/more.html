@@ -4,41 +4,80 @@
 {% endblock %}
 
 {% block main %}
-<h6>More Detail</h6>
-<h1>{{ selection }}</h1>
-<br>
-<!-- QUESTS -->
-{% if quest %}
-<div class="form-group">
-    <div class="col">
-        Name: {{ quest[0]['name'] }}
+<container>
+    <div class="row">
+        <h6>More Detail</h6>
+    </div>    
+    <div class="row">
+        <h1>{{ selection }}</h1>
+    </div>    
+    <br>
+    <div class="row">
+        <div class="col">
+            <div class="row">
+                <!-- Go back -->
+                <button class="btn btn-primary" onclick="goBack()">Go Back</button>
+                <script>
+                    function goBack() {
+                    window.history.back();
+                    }
+                </script>
+            </div>
+            <hr>
+            <div class="row">
+                <h2>Edit</h2>
+            </div>
+            <!-- QUESTS -->
+            {% if quest %}
+            <div class="row">
+                <div class="form-group">
+                    <label for="name">Name | current: {{ quest[0]['name'] }}</label>
+                    <input autocomplete="off" autofocus class="form-control" id="name" name="name" placeholder="{{ quest[0]['name'] }}" type="text">            
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group">
+                    <label for="place">Place | current: {{ quest[0]['place_name'] }}</label>
+                    <select style="color:grey" id="place" class="form-control" name="place">
+                        <option disabled="" selected="" value="">Location</option>
+                        {% for place in places %}
+                            <option value="{{ place['name'] }}">{{ place['name'] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group">
+                    <label for="description">Description | current: {{ quest[0]['description'] }}</label>
+                    <input autocomplete="off" autofocus class="form-control" id="description" name="description" placeholder="{{ quest[0]['description'] }}" type="text">            
+                </div>
+            </div>
+            {% endif %}
+        </div>
     </div>
-    <div class="col">
-        <input autocomplete="off" autofocus class="form-control" id="name" name="name" placeholder="{{ quest[0]['name'] }}" type="text">            
+    <br>
+    <div class="row">
+        <div class="col">
+            <div class="row">
+                <!-- Submit changes -->
+                <form action="/more/quest/{{ quest[0]['name'] }}/" method="post">
+                    <button class="btn btn-primary" type="submit">Submit Changes</button>
+                </form>
+            </div>
+            <hr>
+            <div class="row">
+                <!-- Delete -->
+                <form action="/delete/quest/{{ quest[0]['name'] }}/" method="post">
+                    <button id="delete" class="btn btn-danger" type="submit" onclick="return confirm('Delete {{ quest[0]['name'] }} forever?')">
+                        Delete Permanently
+                    </button>
+                    <small id="delete" class="form-text text-muted">This action cannot be undone.</small>
+                </form>
+            </div>
+        </div>
     </div>
-</div>
-<div class="form-group">
-    <div class="col">
-        Place: {{ quest[0]['place_name'] }}
-    </div>
-    <div class="form-group">
-        <select style="color:grey" id="place" class="form-control" name="place">
-        <option disabled="" selected="" value="">Location</option>
-        {% for place in places %}
-            <option value="{{ place['name'] }}">{{ place['name'] }}</option>
-        {% endfor %}
-        </select>
-    </div>
-</div>
-<div class="form-group">
-    <div class="col">
-        Description: {{ quest[0]['description'] }}
-    </div>
-    <div class="col">
-        <input autocomplete="off" autofocus class="form-control" id="description" name="description" placeholder="{{ quest[0]['description'] }}" type="text">            
-    </div>
-</div>
-{% endif %}
+</container>
+
 
 <!-- <form action="/update/quest" method="post">
     <p>Quest Name</p>
@@ -61,27 +100,5 @@
     <br>
     <button class="btn btn-primary" type="submit">Save Changes</button>
 </form> -->
-<hr>
-<form action="/more/quest/{{ quest[0]['name'] }}/" method="post">
-    <button class="btn btn-primary" type="submit">Submit Changes</button>
-</form>
-<br>
-<br>
-<button class="btn btn-primary" onclick="goBack()">Go Back</button>
-<br>
-<br>
-<br>
-<form action="/delete/quest/{{ quest[0]['name'] }}/" method="post">
-    <button class="btn btn-danger" type="submit" onclick="return confirm('Delete {{ quest[0]['name'] }} forever?')">
-        Delete
-    </button>
-</form>
-
-<script>
-function goBack() {
-  window.history.back();
-}
-</script>
-
 
 {% endblock %}

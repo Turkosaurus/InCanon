@@ -45,7 +45,12 @@ db = SQL(os.getenv('DATABASE_URL'))
 # DATABASE_URL = os.environ['DATABASE_URL']
 # conn = psycopg2.connect(DATABASE_URL, sslmode='require')
 
-
+""" Type Conversions """
+def ifstr(s):
+    if s is None:
+        return ''
+    else:
+        return str(s)
 
 """ Database Helper Functions """
 def get_ac_id():
@@ -465,40 +470,54 @@ def campaigns():
             return render_template("campaigns.html", active=active, campaigns=campaigns, players=players, allcampaigns=allcampaigns, )
 
     else:
-        # Requested campaign change
-        changecampaign = request.form.get("change_campaign")
-        joincampaign = request.form.get("join_campaign")
-        codeword = request.form.get("codeword")
-        print(changecampaign)
-        print(joincampaign)
-        if changecampaign == "None":
-            if joincampaign == "None":
-                # If submission with no data
+        # Capture posted values; if "None" convert to ''; else pass as str(value)
+        changecampaign = ifstr(request.form.get("change_campaign"))
+        joincampaign = ifstr(request.form.get("join_campaign"))
+        codeword_given = ifstr(request.form.get("codeword"))
+
+        # Query for chosen campaign's data
+        campaigns = db.execute("SELECT * FROM campaigns WHERE name=:joincampaign",joincampaign=joincampaign)
+
+        # Check for change_campaign submission; if none, proceed to check for join_campaign
+        if not changecampaign:
+            print(f"no changecampaign")
+
+            # Check for join_campaign submission; if none redirect back to campaigns
+            if not joincampaign:
+                print(f"no joincampaign")
+
+                # Redirect back to "/campaigns" when no data submitted
                 return redirect("/campaigns")
+
+            # Join request exists; proceed to verify, then implement join
             else:
-                # Verify codeword, reject with error if wrong
-                cw = db.execute("SELECT codeword FROM campaigns WHERE codeword=:codeword", codeword=codeword)
-                if codeword == cw:
-                    newactive = joincampaign
+                print(f"joincampaign found")
+                # Verify codeword
+                # If password is incorrect
+                codeword_actual = campaigns[0]['codeword']
+                if codeword_given != codeword_actual:
+                    return render_template("error.html", errcode=403, errmsg="Codeword incorrect.")
+
+                # On success, join them to the campaign
                 else:
-                    render_template("error.html", errcode=403, errmsg="Codeword Incorrect")
+                    # Add to campaign (update parties to include association)
+                    db.execute("INSERT INTO parties (campaign_id, user_id) VALUES (:campaign_id, :user_id)", campaign_id=campaigns[0]['campaign_id'], user_id=session["user_id"])
+
+                    # Set that campaign as active (update users to indicate active campaign)
+                    db.execute("UPDATE users SET activecampaign_id=:newactive WHERE id=:user_id", newactive=campaigns[0]['campaign_id'], user_id=session["user_id"])
+                    return redirect("/")
+
+
+        # Change request exists; proceed to verify, then implement change
         else:
-            newactive = changecampaign
-        print(newactive)
+            # Fetch campaign ID from campaign name
+            newactiveid = db.execute("SELECT campaign_id FROM campaigns WHERE name=:newactive", newactive=changecampaign)
+            print(f"changing to campaign {newactiveid}")
 
-        # Fetch campaign ID from campaign name
-        newactiveid = db.execute("SELECT campaign_id FROM campaigns WHERE name=:newactive", newactive=newactive)
-        print(newactiveid)
+            # Update user's new active campaign ID
+            db.execute("UPDATE users SET activecampaign_id=:newactiveid WHERE id=:user_id", newactiveid=newactiveid[0]['campaign_id'], user_id=session["user_id"])
 
-        # Update user's new active campaign ID
-        db.execute("UPDATE users SET activecampaign_id=:newactiveid WHERE id=:user_id", newactiveid=newactiveid[0]['campaign_id'], user_id=session["user_id"])
-
-        # Select that new active campaign, load information, redirect to homepage
-        active = db.execute("SELECT name FROM campaigns WHERE campaign_id = (SELECT activecampaign_id FROM users WHERE id=:user_id)", user_id=session["user_id"])
-        campaigns = db.execute("SELECT name FROM campaigns WHERE campaign_id = \
-                                (SELECT campaign_id FROM parties WHERE user_id = :user_id)", \
-                                user_id=session["user_id"])
-        return redirect("/")
+            return redirect("/")
 
 
 @app.route("/newcampaign", methods=["GET", "POST"])
@@ -649,7 +668,18 @@ def errorhandler(e):
     """Handle error"""
     if not isinstance(e, HTTPException):
         e = InternalServerError()
-    return render_template("error.html", errmsg=e.name, errcode=e.code)
+
+    # Set error variables and store in db
+    errcode=e.code
+    errmsg=e.name
+
+    # Log some errors in db
+    userwerr=db.execute("SELECT username FROM users where id=:user_id", user_id=session['user_id'])
+    db.execute("INSERT INTO errors (code, message, userwerr) \
+                            VALUES (:errcode, :errmsg, :userwerr)", \
+                            errcode=errcode, errmsg=errmsg, userwerr=userwerr)
+
+    return render_template("error.html", errcode=errcode, errmsg=errmsg)
 
 # Listen for errors
 for code in default_exceptions:

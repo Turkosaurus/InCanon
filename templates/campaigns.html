@@ -10,56 +10,25 @@ Campaigns
     <br>
     <div class="row">
         <!-- Continue to current campaign -->
-        <div class="col-lg-4 col-md-8 justify-content-center" style="padding-bottom: 1rem;">
+        <div class="col-xl-3 col-md-6 justify-content-center" style="padding-bottom: 1rem;">
             <div class="card">
                 <div class="card-body">
-                    <form action="/campaigns" method="post">
-                        <h5 class="card-title">Continue "{{ active[0]['name'] }}"</h5>
-                        <h6 class="card-subtitle mb-2 text-muted">Players</h6>
-                        <ul class="list-group list-group-flush">
-                            {% for player in players %}
-                                <li class="list-group-item">{{ player['username'] }}</li>
-                            {% endfor %}
-                        </ul>
-                        <button id="continue" name="continue" class="btn btn-primary btn-block" type="button">Contine</button>
-                    </form>
+                    <h5 class="card-title">Continue "{{ active[0]['name'] }}"</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">Players</h6>
+                    <ul class="list-group list-group-flush">
+                        {% for player in players %}
+                            <li class="list-group-item">{{ player['username'] }}</li>
+                        {% endfor %}
+                    </ul>
+                    <a href="/" class="linkbutton">
+                        <button id="continue" name="continue" class="btn btn-primary btn-block" type="button">Continue</button>
+                    </a>
                 </div>
             </div>
         </div>
-        <!-- Change campaign -->
-        <div class="col-lg-4 col-md-8 justify-content-center" style="padding-bottom: 1rem;">
-            <div class="card">
-                <div class="card-body">
-                    <form action="/campaigns" method="post">
-                        <h5 class="card-title">Change</h5>
-                        <h6 class="card-subtitle mb-2 text-muted">Change primary campaign</h6>
-                        <select id="change_campaign" class="form-control" name="change_campaign">
-                            <option disabled="" selected="" value="">Change Campaign</option>
-                            {% for campaign in campaigns %}
-                                <option value="{{ campaign['name'] }}">{{ campaign['name'] }}</option>
-                            {% endfor %}
-                        </select>
-                        <br>
-                        <button id="submit" disabled="" class="btn btn-primary btn-block" type="submit">Change</button>
-                    </form>
-                    <script>
-                        document.querySelector('#change_campaign').oninput = function () {
-                            if (document.querySelector('#change_campaign').value === '') {
-                                document.querySelector('#submit').disabled = true;
-                            } else {
-                                if (document.querySelector('#change_campaign').value > 0) {
-                                    document.querySelector('#submit').disabled = true;
-                                } else {
-                                document.querySelector('#submit').disabled = false;
-                                }
-                            }
-                        }
-                    </script>                    
-                </div>
-            </div>                
-        </div>
+
         <!-- Join Campaign -->
-        <div class="col-lg-4 col-md-8 justify-content-center" style="padding-bottom: 1rem;">
+        <div class="col-xl-3 col-md-6 justify-content-center" style="padding-bottom: 1rem;">
             <div class="card">
                 <div class="card-body">
                     <!-- TODO make this post work -->
@@ -90,6 +59,55 @@ Campaigns
                             }
                         }
                     </script>                    
+                </div>
+            </div>
+        </div>
+
+        <!-- Change campaign -->
+        <div class="col-xl-3 col-md-6 justify-content-center" style="padding-bottom: 1rem;">
+            <div class="card">
+                <div class="card-body">
+                    <form action="/campaigns" method="post">
+                        <h5 class="card-title">Change</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">Change primary campaign</h6>
+                        <select id="change_campaign" class="form-control" name="change_campaign">
+                            <option disabled="" selected="" value="">Change Campaign</option>
+                            {% for campaign in campaigns %}
+                                <option value="{{ campaign['name'] }}">{{ campaign['name'] }}</option>
+                            {% endfor %}
+                        </select>
+                        <br>
+                        <button id="submit" disabled="" class="btn btn-primary btn-block" type="submit">Change</button>
+                    </form>
+                    <script>
+                        document.querySelector('#change_campaign').oninput = function () {
+                            if (document.querySelector('#change_campaign').value === '') {
+                                document.querySelector('#submit').disabled = true;
+                            } else {
+                                if (document.querySelector('#change_campaign').value > 0) {
+                                    document.querySelector('#submit').disabled = true;
+                                } else {
+                                document.querySelector('#submit').disabled = false;
+                                }
+                            }
+                        }
+                    </script>                    
+                </div>
+            </div>                
+        </div>
+
+        <!-- Make new campaign -->
+        <div class="col-xl-3 col-md-6 justify-content-center" style="padding-bottom: 1rem;">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Start New Campaign</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">Make a new story space</h6>
+                    <p>
+                        Create the campaign, then share the <code>name</code> and <code>codeword</code> with your party members.
+                    </p>
+                    <a href="/newcampaign">
+                        <button id="start" name="start" class="btn btn-primary btn-block" type="button">Start</button>
+                    </a>
                 </div>
             </div>
         </div>

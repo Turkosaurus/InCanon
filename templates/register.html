@@ -5,37 +5,69 @@
 {% endblock %}
 
 {% block main %}
-    <h3>{{ errmsg }}</h3>
-    <h3>Create an account to get started.</h3>
+<container>
+    <div class="row">
+        <h1>Register</h1>
+    </div>
+    <hr>
+    <div class="row">
+        <h2>{{ errmsg }}</h2>
+        <h3>Create an account to get started.</h3>
+    </div>
     <br>
-    <p>InCanon helps tell stories by cataloging important details.</p>
-    <p>Everyone can contribute.</p>
+    <div class="row">
+        <p>InCanon helps tell stories by cataloging important details.</p>
+    </div>
+    <div class="row">
+            <p>Players and GMs alike can contribute as the story unfolds.</p>
+    </div>
     <br>
-    <form action="/register" method="post">
-        <div class="form-group">
-            <input autocomplete="off" style="color:grey" autofocus class="form-control" name="username" placeholder="Username" type="text">
-        </div>
-        <div class="form-group">
-            <input class="form-control" style="color:grey" name="password" placeholder="Password" type="password">
-        </div>
-        <div class="form-group">
-            <input class="form-control" style="color:grey" name="passwordconfirm" placeholder="Password (confirm)" type="password">
-        </div>
-        <button class="btn btn-primary" type="submit">Register</button>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <h5>Privacy</h5>
-        <p>Expressly for the purposes of development and testing, the following user data is kept:</p>
-        <ul style="max-width:400px;text-align:left;margin:auto" >
-            <li>Username</li>
-            <li>Timestamped login and logout activity</li>
-            <li>Contributions are preserved with user attribution</li>
-        </ul>
-        <br>
-        <p>User passwords are not stored.</p>
-        <p>User data is never shared.</p>
-    </form>
+    <div class="row">
+        <form action="/register" method="post">
+            <div class="form-group">
+                <input autocomplete="off" autofocus class="form-control" name="username" placeholder="Public Username" type="text">
+                <small id="usernamehelp" class="form-text text-muted">Only usernames are public for purposes of invitations.</small>
+            </div>
+            <div class="form-group">
+                <input class="form-control" name="password" placeholder="Password" type="password">
+            </div>
+            <div class="form-group">
+                <input class="form-control" name="passwordconfirm" placeholder="Password (confirm)" type="password">
+                <small id="passwordhelp" class="form-text text-muted">Passwords must be at least 8 characters long.</small>
+            </div>
+            <button class="btn btn-primary" type="submit">Register</button>
+        </form>    
+    </div>
+    <br>
+    <hr>
+    <div class="row">
+        <h2>Data Privacy</h2>
+    </div>
+    <div class="row">
+        <h6>Expressly for the purposes of function, development, and testing, the following user data is kept:</h6>
+    </div>
+    <br>
+    <table class="table table-hover">
+        <tbody>
+            <tr>
+                <td scope="col-sm-3">Username</td>
+                <td scope="col-sm-9">This public moniker identifies the player to their party members.</td>
+            </tr>
+        </tbody>
+        <tbody>
+            <tr>
+                <td scope="col-sm-3">Password</td>
+                <td scope="col-sm-9">Passwords are never stored in plaintext, but it's still important to choose something unique.</td>
+            </tr>
+        </tbody>
+        <tbody>
+            <tr>
+                <td scope="col-sm-3">Activity</td>
+                <td scope="col-sm-9">History of logins, logouts, and timestamped attributions may be kept for testing and validation purposes.</td>
+            </tr>
+        </tbody>
+    </table>
+    <h5>User data is never shared.</h5>
+</container>
+
 {% endblock %}
