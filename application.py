@@ -42,9 +42,7 @@ db = SQL(os.getenv('DATABASE_URL'))
 # https://devcenter.heroku.com/articles/heroku-postgresql#local-setup
 # import os
 # import psycopg2
-
 # DATABASE_URL = os.environ['DATABASE_URL']
-
 # conn = psycopg2.connect(DATABASE_URL, sslmode='require')
 
 
@@ -107,7 +105,7 @@ def index():
         # Render campaign summary page
         return render_template("index.html", campaign=campaign, people=people, places=places, items=items, quests=quests, players=players)
 
-
+# TODO change location in db to place_name or place_id; better yet, have function to convert between them
 @app.route("/people", methods=["GET", "POST"])
 @login_required
 def people():
@@ -154,7 +152,7 @@ def places():
         items = get_items(ac_id)
         quests = get_quests(ac_id)
 
-        # Render people page
+        # Render places page
         return render_template("places.html", people=people, places=places, items=items, quests=quests)
 
     # Process posted content
@@ -166,7 +164,7 @@ def places():
 
         # Query for active campaign
         ac_id = get_ac_id()
-        
+
         # Insert given data
         db.execute("INSERT INTO places (name, campaign_id, description) VALUES (:name, :ac_id, :description)",
                     name=name, ac_id=ac_id, description=description)
@@ -248,39 +246,66 @@ def quests():
 @login_required
 def more(kind, selection):
 
+    # Display details for the chosen selection
     if request.method == 'GET':
+
         # Request current campaign's data
         ac_id = get_ac_id()
         people = get_people(ac_id)
         places = get_places(ac_id)
         items = get_items(ac_id)
         data = db.execute("SELECT * FROM quests WHERE name=:selection", selection=selection)
+        
+        if kind == "item":
+            return render_template("error.html", errcode=501, errmsg="Update Feature Coming Soon")
+
+        if kind == "place":
+            return render_template("error.html", errcode=501, errmsg="Update Feature Coming Soon")
+
+        if kind == "person":
+            return render_template("error.html", errcode=501, errmsg="Update Feature Coming Soon")
+
         if kind == "quest":
             return render_template("more.html", kind=kind, selection=selection, people=people, places=places, items=items, quest=data)
     
     else:
-        return "more POST"
+        return render_template("error.html", errcode=501, errmsg="Update Feature Coming Soon")
 
 
-@app.route("/delete/<kind>/<selection>/", methods=["GET", "POST"])
+# @app.route("/update/<selection>/", methods=["GET"])
+# @login_required
+# def update(selection):
+#     if request.method == 'GET':
+#         name = request.form.get("name")
+#         place_name = request.form.get("place")
+#         description = request.form.get("description")
+#         print(selection)
+#         return name
+    
+
+
+
+@app.route("/delete/<kind>/<selection>/", methods=["POST"])
 @login_required
 def delete(kind, selection):
 
-    if request.method == 'GET':
+    if request.method == 'POST':
 
         # Request current campaign's data
         ac_id = get_ac_id()
         people = get_people(ac_id)
         places = get_places(ac_id)
         items = get_items(ac_id)
+
         # TODO conditional tests to restrict access
+        # Delete the selection
         if kind == "quest":
             db.execute("DELETE FROM quests WHERE name=:selection", selection=selection)
             return redirect("/quests")
             # return render_template("quests.html", people=people, places=places, items=items, quests=quests)
     
     else:
-        return "more POST"
+        return render_template("error.html", errcode=403, errmsg="Method not allowed.")
 
 
 # @app.route("/questedit/<int:quest>/", methods=["POST"])

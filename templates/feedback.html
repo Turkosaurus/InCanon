@@ -5,14 +5,19 @@
 {% endblock %}
 
 {% block main %}
-<h1>Thank you for visiting.</h1>
-<p>Feedback helps the site improve.</p>
-
-<!--<label for="feedback">Input:</label>-->
-<form action="/feedback" method="post">
-<textarea id="feedback" name="feedback" rows="6" cols="40">
-</textarea>
-  <br><br>
-  <button class="btn btn-primary" type="submit">Send Feedback</button>
-</form>
+<container>
+  <div class="row">
+    <h1>Thank you for visiting.</h1>
+  </div>  
+  <div class="row">
+    <p>Feedback helps improve the site.</p>
+  </div>  
+  <div class="row">
+    <form action="/feedback" method="post">
+    <textarea id="feedback" name="feedback" rows="6" cols="60"></textarea>          
+  </div>
+  <div class="row">
+    <button class="btn btn-primary" type="submit">Send Feedback</button>
+  </div>
+</container>
 {% endblock %}

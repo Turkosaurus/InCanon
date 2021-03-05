@@ -6,24 +6,57 @@
 
 {% block main %}
 <container>
-    <div class="row justify-content-center">
-        <div class="col-6">
-            <h1>Help</h1>
-            <ol>
-                <li>
-                    Create an Account
-                </li>
-                <li>
-                    Make a Campaign
-                </li>
-                <li>
-                    Add places
-                </li>
-                <li>
-                    Add NPCs, items, and quests
-                </li>
-            </ol>
+    <h1>Help</h1>
+    <hr>
+    <div class="row">
+        <div class="card" style="width: 18rem;">
+            <div class="card-body">
+                <h5 class="card-title">1. Create an Account</h5>
+                <p class="card-text">Only a username (visible to party members) and password are required.</p>
+                <a href="/register" class="btn btn-primary">Register Now</a>
+            </div>
         </div>
-    </div>    
+    </div>
+    <br>
+    <div class="row">
+        <div class="card" style="width: 18rem;">
+            <!-- <img src="..." class="card-img-top" alt="..."> -->
+            <div class="card-body">
+                <h5 class="card-title">2. Join a Campaign</h5>
+                <p class="card-text">Join an existing campaign by entering the "codeword" provided by your party members, or start one yourself.</p>
+                <a href="/campaigns" class="btn btn-primary">See Campaigns</a>
+            </div>
+        </div>
+        <div class="card" style="width: 18rem;">
+            <!-- <img src="..." class="card-img-top" alt="..."> -->
+            <div class="card-body">
+                <h5 class="card-title">3. Add Places</h5>
+                <p class="card-text">Location information allows campaign events to be sorted locally.</p>
+                <a href="/places" class="btn btn-primary">See Places</a>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="card" style="width: 18rem;">
+        <!-- <img src="..." class="card-img-top" alt="..."> -->
+            <div class="card-body">
+                <h5 class="card-title">4. Add quests</h5>
+                <p class="card-text">You'll be able to view and edit all this information later.</p>
+                <a href="/quests" class="btn btn-primary">See Quests</a>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="card" style="width: 18rem;">
+        <!-- <img src="..." class="card-img-top" alt="..."> -->
+            <div class="card-body">
+                <h5 class="card-title">5. Play and Track</h5>
+                <p class="card-text">Items and people can be added on the fly. See everthing together from the campaign's home page.</p>
+                <a href="/" class="btn btn-primary">Go to Campaign's Home Page</a>
+            </div>
+        </div>    
+    </div>
 </container>
 {% endblock %}
