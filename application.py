@@ -38,7 +38,7 @@ Session(app)
 # Configure Heroku Postgres database
 db = SQL(os.getenv('DATABASE_URL'))
 
-
+# Use local Postgres DB
 # https://devcenter.heroku.com/articles/heroku-postgresql#local-setup
 # import os
 # import psycopg2
@@ -441,37 +441,60 @@ def campaigns():
         active = db.execute("SELECT name FROM campaigns WHERE campaign_id=:activecampaign_id",
                             activecampaign_id=users[0]['activecampaign_id'])
 
+        ac_id=get_ac_id()
+
         # Query for all joined campaigns, for "Change Active Campaign" selector
         campaigns = db.execute("SELECT name FROM campaigns WHERE campaign_id IN (SELECT campaign_id FROM parties WHERE user_id=:user_id)", \
                                 user_id=session["user_id"])
 
-        # # Testing
-        # print(f"users: {users}")
-        # print(f"active: {active}")
-        # print(f"campaigns: {campaigns}")
-        # print(active)
+        # Select all player names in active campaign
+        players = db.execute("SELECT username FROM users WHERE id IN (SELECT user_id FROM parties WHERE campaign_id=:ac_id)",
+                            ac_id=ac_id)
 
-        # If user has no active campaign
+        # TODO, prevent multiple signups by only selecing campaigns someone is not in
+        # Select every possible campaign to join
+        allcampaigns = db.execute("SELECT name FROM campaigns;")
+
+        # If user has no active campaign, redirect to welcome
         if not active:
             return render_template("welcome.html", users=users)
 
+        # Go to campaign selection screen
         else:
-            return render_template("campaigns.html", campaigns=campaigns, active=active)
+            print(players)
+            return render_template("campaigns.html", active=active, campaigns=campaigns, players=players, allcampaigns=allcampaigns, )
 
     else:
         # Requested campaign change
-        newactive = request.form.get("change_campaign")
+        changecampaign = request.form.get("change_campaign")
+        joincampaign = request.form.get("join_campaign")
+        codeword = request.form.get("codeword")
+        print(changecampaign)
+        print(joincampaign)
+        if changecampaign == "None":
+            if joincampaign == "None":
+                # If submission with no data
+                return redirect("/campaigns")
+            else:
+                # Verify codeword, reject with error if wrong
+                cw = db.execute("SELECT codeword FROM campaigns WHERE codeword=:codeword", codeword=codeword)
+                if codeword == cw:
+                    newactive = joincampaign
+                else:
+                    render_template("error.html", errcode=403, errmsg="Codeword Incorrect")
+        else:
+            newactive = changecampaign
+        print(newactive)
 
+        # Fetch campaign ID from campaign name
         newactiveid = db.execute("SELECT campaign_id FROM campaigns WHERE name=:newactive", newactive=newactive)
+        print(newactiveid)
 
-        # Update user's new active campaign
+        # Update user's new active campaign ID
         db.execute("UPDATE users SET activecampaign_id=:newactiveid WHERE id=:user_id", newactiveid=newactiveid[0]['campaign_id'], user_id=session["user_id"])
 
-        # Select that new active campaign
+        # Select that new active campaign, load information, redirect to homepage
         active = db.execute("SELECT name FROM campaigns WHERE campaign_id = (SELECT activecampaign_id FROM users WHERE id=:user_id)", user_id=session["user_id"])
-        print("active:")
-        print(active)
-
         campaigns = db.execute("SELECT name FROM campaigns WHERE campaign_id = \
                                 (SELECT campaign_id FROM parties WHERE user_id = :user_id)", \
                                 user_id=session["user_id"])
@@ -515,7 +538,7 @@ def joincampaign():
     # Allow users to submit choice to join all active campaigns
     if request.method == 'GET':
         # TODO, prevent multiple signups by only selecing campaigns someone is not in
-        campaigns = db.execute("SELECT name FROM campaigns;")
+        allcampaigns = db.execute("SELECT name FROM campaigns;")
         print(campaigns)
         return render_template("joincampaign.html", campaigns=campaigns)
 
