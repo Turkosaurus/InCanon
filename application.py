@@ -131,6 +131,7 @@ def people():
 
         # Capture submitted responses
         name = request.form.get("name")
+        name = name.strip()
         place = request.form.get("place")
         description = request.form.get("description")
 
@@ -165,6 +166,7 @@ def places():
 
         # Capture submitted responses
         name = request.form.get("name")
+        name = name.strip()
         description = request.form.get("description")
 
         # Query for active campaign
@@ -198,6 +200,7 @@ def items():
 
         # Capture submitted responses
         name = request.form.get("name")
+        name = name.strip()
         place = request.form.get("place")
         description = request.form.get("description")
 
@@ -234,6 +237,7 @@ def quests():
 
         # Capture submitted responses
         name = request.form.get("name")
+        name = name.strip()
         place_name = request.form.get("place")
         description = request.form.get("description")
 
@@ -246,6 +250,8 @@ def quests():
 
         return redirect("/quests")
 
+
+""" More Detail and Deletion """
 # When top level items are clicked
 @app.route("/more/<kind>/<selection>/", methods=["GET", "POST"])
 @login_required
@@ -259,35 +265,40 @@ def more(kind, selection):
         people = get_people(ac_id)
         places = get_places(ac_id)
         items = get_items(ac_id)
-        data = db.execute("SELECT * FROM quests WHERE name=:selection", selection=selection)
         
-        if kind == "item":
-            return render_template("error.html", errcode=501, errmsg="Update Feature Coming Soon")
+        print(kind)
+        print(selection)
 
         if kind == "place":
-            return render_template("error.html", errcode=501, errmsg="Update Feature Coming Soon")
+            data = db.execute("SELECT * FROM places WHERE name=:selection AND campaign_id=:ac_id", selection=selection, ac_id=ac_id)
+            print(data)
+            return render_template("more.html", kind=kind, selection=selection, people=people, places=places, items=items, place=data)
 
         if kind == "person":
-            return render_template("error.html", errcode=501, errmsg="Update Feature Coming Soon")
+            data = db.execute("SELECT * FROM characters WHERE name=:selection AND campaign_id=:ac_id", selection=selection, ac_id=ac_id)
+            print(data)
+            return render_template("more.html", kind=kind, selection=selection, people=people, places=places, items=items, person=data)
+
+        if kind == "item":
+            data = db.execute("SELECT * FROM items WHERE name=:selection AND campaign_id=:ac_id", selection=selection, ac_id=ac_id)
+            print(data)
+            return render_template("more.html", kind=kind, selection=selection, people=people, places=places, items=items, item=data)
 
         if kind == "quest":
+            data = db.execute("SELECT * FROM quests WHERE name=:selection AND campaign_id=:ac_id", selection=selection, ac_id=ac_id)
+            print(data)
             return render_template("more.html", kind=kind, selection=selection, people=people, places=places, items=items, quest=data)
     
+    # Update selection
     else:
-        return render_template("error.html", errcode=501, errmsg="Update Feature Coming Soon")
-
-
-# @app.route("/update/<selection>/", methods=["GET"])
-# @login_required
-# def update(selection):
-#     if request.method == 'GET':
-#         name = request.form.get("name")
-#         place_name = request.form.get("place")
-#         description = request.form.get("description")
-#         print(selection)
-#         return name
-    
-
+        if kind == "place":
+            return render_template("error.html", errcode=501, errmsg="Edit Feature Coming Soon")
+        if kind == "person":
+            return render_template("error.html", errcode=501, errmsg="Edit Feature Coming Soon")
+        if kind == "item":
+            return render_template("error.html", errcode=501, errmsg="Edit Feature Coming Soon")
+        if kind == "quest":
+            return render_template("error.html", errcode=501, errmsg="Edit Feature Coming Soon")
 
 
 @app.route("/delete/<kind>/<selection>/", methods=["POST"])
@@ -302,20 +313,40 @@ def delete(kind, selection):
         places = get_places(ac_id)
         items = get_items(ac_id)
 
-        # Delete the selection
+        # TODO make for people
+        # TODO make for places
+        # TODO test items
+
+        # ITEMS
+        if kind == "items":
+
+            # Ensure permissions
+            quest_campaign_id = db.execute("SELECT campaign_id FROM items WHERE name=:selection", selection=selection)
+            qcid = quest_campaign_id[0]['campaign_id']
+            if ac_id != qcid:
+                return render_template("error.html", errcode=403, errmsg="Users may only edit entries from their current campaign")
+
+            # Effect deletion
+            else:
+                db.execute("DELETE FROM items WHERE name=:selection AND campaign_id=:quest_campaign_id", selection=selection, quest_campaign_id=qcid)
+                return redirect("/items")    
+
+        # QUEST
         if kind == "quest":
 
             # Ensure permissions
+            print(selection)
             quest_campaign_id = db.execute("SELECT campaign_id FROM quests WHERE name=:selection", selection=selection)
-            print(quest_campaign_id)
-            if ac_id != quest_campaign_id[0]['campaign_id']:
+            qcid = quest_campaign_id[0]['campaign_id']
+            print(f"qcid={qcid}")
+            if ac_id != qcid:
                 return render_template("error.html", errcode=403, errmsg="Users may only edit entries from their current campaign")
 
-            # Permission granted
+            # Effect deletion
             else:
-                # Delete selected entry
-                db.execute("DELETE FROM quests WHERE name=:selection", selection=selection)
-                return redirect("/quests")    
+                db.execute("DELETE FROM quests WHERE name=:selection AND campaign_id=:quest_campaign_id", selection=selection, quest_campaign_id=qcid)
+                return redirect("/quests")
+
     else:
         return render_template("error.html", errcode=403, errmsg="Method not allowed.")
 
@@ -536,6 +567,7 @@ def newcampaign():
     # Process submission on 'POST'
     else:
         name=request.form.get("name")
+        name=name.strip()
         codeword=request.form.get("codeword")
 
         # Add campaign to database

@@ -6,7 +6,7 @@
 {% block main %}
 <container>
     <div class="row">
-        <h6>More Detail</h6>
+        <h6 class="text-capitalize">{{ kind }} Detail</h6>
     </div>    
     <div class="row">
         <h1>{{ selection }}</h1>
@@ -23,10 +23,26 @@
                     }
                 </script>
             </div>
-            <hr>
+
             <div class="row">
                 <h2>Edit</h2>
             </div>
+
+            <!-- PEOPLE -->
+            {% if person %}
+            {% endif %}
+
+
+            <!-- PLACES -->
+            {% if place %}
+            {% endif %}
+
+
+            <!-- ITEMS -->
+            {% if item %}
+            {% endif %}
+
+            
             <!-- QUESTS -->
             {% if quest %}
             <div class="row">
@@ -52,53 +68,24 @@
                     <input autocomplete="off" autofocus class="form-control" id="description" name="description" placeholder="{{ quest[0]['description'] }}" type="text">            
                 </div>
             </div>
-            {% endif %}
-        </div>
-    </div>
-    <br>
-    <div class="row">
-        <div class="col">
+            <br>
             <div class="row">
                 <!-- Submit changes -->
-                <form action="/more/quest/{{ quest[0]['name'] }}/" method="post">
+                <form action="/more/{{ kind }}/{{ quest[0]['name'] }}/" method="post">
                     <button class="btn btn-primary" type="submit">Submit Changes</button>
                 </form>
             </div>
             <hr>
             <div class="row">
                 <!-- Delete -->
-                <form action="/delete/quest/{{ quest[0]['name'] }}/" method="post">
+                <form action="/delete/{{ kind }}/{{ quest[0]['name'] }}/" method="post">
                     <button id="delete" class="btn btn-danger" type="submit" onclick="return confirm('Delete {{ quest[0]['name'] }} forever?')">
                         Delete Permanently
                     </button>
                     <small id="delete" class="form-text text-muted">This action cannot be undone.</small>
                 </form>
             </div>
+            {% endif %}
         </div>
-    </div>
 </container>
-
-
-<!-- <form action="/update/quest" method="post">
-    <p>Quest Name</p>
-    <div class="form-group">
-        <input autocomplete="off" autofocus class="form-control" id="name" name="name" placeholder="{{ quest[0]['name'] }}" type="text">
-    </div>
-    <br>
-    <p>Change Location (currently: {{ quest[0]['place_name'] }})</p>
-    <div class="form-group">
-        <select style="color:grey" id="place" class="form-control" name="place">
-        <option disabled="" selected="" value="">Location</option>
-        {% for place in places %}
-            <option value="{{ place['name'] }}">{{ place['name'] }}</option>
-        {% endfor %}
-        </select>
-    </div>
-    <br>
-    <p>Overwrit Description</p>
-    <textarea id="description" name="description" placeholder="{{ quest[0]['description']}}"rows="6" cols="40"></textarea>
-    <br>
-    <button class="btn btn-primary" type="submit">Save Changes</button>
-</form> -->
-
 {% endblock %}
