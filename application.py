@@ -302,13 +302,20 @@ def delete(kind, selection):
         places = get_places(ac_id)
         items = get_items(ac_id)
 
-        # TODO conditional tests to restrict access
         # Delete the selection
         if kind == "quest":
-            db.execute("DELETE FROM quests WHERE name=:selection", selection=selection)
-            return redirect("/quests")
-            # return render_template("quests.html", people=people, places=places, items=items, quests=quests)
-    
+
+            # Ensure permissions
+            quest_campaign_id = db.execute("SELECT campaign_id FROM quests WHERE name=:selection", selection=selection)
+            print(quest_campaign_id)
+            if ac_id != quest_campaign_id[0]['campaign_id']:
+                return render_template("error.html", errcode=403, errmsg="Users may only edit entries from their current campaign")
+
+            # Permission granted
+            else:
+                # Delete selected entry
+                db.execute("DELETE FROM quests WHERE name=:selection", selection=selection)
+                return redirect("/quests")    
     else:
         return render_template("error.html", errcode=403, errmsg="Method not allowed.")
 
@@ -456,7 +463,8 @@ def campaigns():
         players = db.execute("SELECT username FROM users WHERE id IN (SELECT user_id FROM parties WHERE campaign_id=:ac_id)",
                             ac_id=ac_id)
 
-        # TODO, prevent multiple signups by only selecing campaigns someone is not in
+        # TODO change so that not all campaigns are always visible
+        # TODO require typing campaign name in form, or using campaign_id number
         # Select every possible campaign to join
         allcampaigns = db.execute("SELECT name FROM campaigns;")
 
@@ -507,7 +515,6 @@ def campaigns():
                     db.execute("UPDATE users SET activecampaign_id=:newactive WHERE id=:user_id", newactive=campaigns[0]['campaign_id'], user_id=session["user_id"])
                     return redirect("/")
 
-
         # Change request exists; proceed to verify, then implement change
         else:
             # Fetch campaign ID from campaign name
@@ -526,7 +533,7 @@ def newcampaign():
     if request.method == 'GET':
         return render_template("newcampaign.html")
 
-    # Process submission on 'GET'
+    # Process submission on 'POST'
     else:
         name=request.form.get("name")
         codeword=request.form.get("codeword")
@@ -547,47 +554,48 @@ def newcampaign():
         db.execute("UPDATE users SET activecampaign_id=:campaign_id WHERE id=:user_id",
                     campaign_id=campaign_id, user_id=session["user_id"])
 
-        return redirect("/")
+        # TODO have a first campaign new message how to flash here
+        return redirect("/", msg=msg)
 
 
-@app.route("/joincampaign", methods=["GET", "POST"])
-@login_required
-def joincampaign():
+# @app.route("/joincampaign", methods=["GET", "POST"])
+# @login_required
+# def joincampaign():
 
-    # Allow users to submit choice to join all active campaigns
-    if request.method == 'GET':
-        # TODO, prevent multiple signups by only selecing campaigns someone is not in
-        allcampaigns = db.execute("SELECT name FROM campaigns;")
-        print(campaigns)
-        return render_template("joincampaign.html", campaigns=campaigns)
+#     # Allow users to submit choice to join all active campaigns
+#     if request.method == 'GET':
+#         # TODO, prevent multiple signups by only selecing campaigns someone is not in
+#         allcampaigns = db.execute("SELECT name FROM campaigns;")
+#         print(campaigns)
+#         return render_template("joincampaign.html", campaigns=campaigns)
 
-    #
-    else:
-        # Store submitted data
-        joincampaign = request.form.get("joincampaign")
-        codeword_given = request.form.get("codeword")
+#     #
+#     else:
+#         # Store submitted data
+#         joincampaign = request.form.get("joincampaign")
+#         codeword_given = request.form.get("codeword")
 
-        # Query database for required information
-        campaigns = db.execute("SELECT * FROM campaigns WHERE name=:joincampaign",joincampaign=joincampaign)
-        print(campaigns)
+#         # Query database for required information
+#         campaigns = db.execute("SELECT * FROM campaigns WHERE name=:joincampaign",joincampaign=joincampaign)
+#         print(campaigns)
 
-        # If no campaign choice is made
-        if not joincampaign:
-            return render_template("error.html", errcode=400, errmsg="Campaign choice required.")
+#         # If no campaign choice is made
+#         if not joincampaign:
+#             return render_template("error.html", errcode=400, errmsg="Campaign choice required.")
 
-        # If password is incorrect
-        codeword_actual = campaigns[0]['codeword']
-        if codeword_given != codeword_actual:
-            return render_template("error.html", errcode=403, errmsg="Codeword incorrect.")
+#         # If password is incorrect
+#         codeword_actual = campaigns[0]['codeword']
+#         if codeword_given != codeword_actual:
+#             return render_template("error.html", errcode=403, errmsg="Codeword incorrect.")
 
-        # On success, add them to the campaign
-        else:
-            # Update parties to include association
-            db.execute("INSERT INTO parties (campaign_id, user_id) VALUES (:campaign_id, :user_id)", campaign_id=campaigns[0]['campaign_id'], user_id=session["user_id"])
+#         # On success, add them to the campaign
+#         else:
+#             # Update parties to include association
+#             db.execute("INSERT INTO parties (campaign_id, user_id) VALUES (:campaign_id, :user_id)", campaign_id=campaigns[0]['campaign_id'], user_id=session["user_id"])
 
-            # Update users to indicate active campaign
-            db.execute("UPDATE users SET activecampaign_id=:newactive WHERE id=:user_id", newactive=campaigns[0]['campaign_id'], user_id=session["user_id"])
-            return redirect("/")
+#             # Update users to indicate active campaign
+#             db.execute("UPDATE users SET activecampaign_id=:newactive WHERE id=:user_id", newactive=campaigns[0]['campaign_id'], user_id=session["user_id"])
+#             return redirect("/")
 
 
 

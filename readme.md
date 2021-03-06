@@ -6,13 +6,11 @@ Based, in part, on final submission to CS50x
 ---
 
 ## Summary
-"InCanon" uses a relational database to collaboratively build a compendium of
-all the people, places, items, and quests that animate a role-playing campaign setting.
+"InCanon" uses a relational database to collaboratively build a compendium of all the people, places, items, and quests that animate a role-playing campaign setting.
 
-Players and Game Masters can join their own shared campaign in which everyone
-views the index of notable entries as their home page, and anyone can add new information.
+Players and Game Masters can join their own shared campaign in which everyone views the index of notable entries as their home page, and anyone can add new information.
 
-Database schema are available on scratchpad.txt.
+To provide context for database associations, original database schema are available on scratchpad.txt.
 
 ## Features
 - Security
@@ -21,33 +19,42 @@ Database schema are available on scratchpad.txt.
 
 - Persistent Database
     - user data
+        - capmaign affiliation
+        - login data
     - campaign data
+        - party affiliation
+        - people
+        - places
+        - items
+        - quests
     - site feedback
+        - custom error logging
 
 ## Technologies Used
-- Flask
+- Web stack
     - Python
-    - WSGI
-    - Gunicorn
+    - Flask
+    - WSGI via Gunicorn
 
 - Database
-    - Sqlite3
-    - Postgres 
+    - Sqlite3 (local development)
+    - Postgres (cloud based via Heroku)
 
 ---
 
 # TODOs
-
-## Bugs
-- ~~Place association handling need to be updated in some routes of application.py or the corresponding templates~~
 
 ## Needed Impovements
 - Ablity to edit existing information
     1. quests
     2. people
     3. the rest
+- delete archived html files
+- translate place names to place ids in all handling
 
 ## Upcoming & Feature Requests
+- add "notes" appendations to exisiting "description"
+    - separate table: note_id | note | player_id | campaign_id
 - Bonds and Grudges
 - Dice roller
 - Import bulk data into campaign
@@ -55,6 +62,10 @@ Database schema are available on scratchpad.txt.
     - external "chat logs"
 
 ## Someday Maybe
+- messenger
 - Live timeline of events
     - timeline search
 - Virtual Tabletop environment integration
+
+## Bugs
+- convert welcome.html to bs4

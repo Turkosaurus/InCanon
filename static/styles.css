@@ -1,5 +1,8 @@
-main, body{
+main, body, .card, .list-group-item {
     background-color: lightgrey;
 }
 
+.form-control {
+    background-color: hsl(0, 0%, 95%);
+}
 /* .linkbutton */
