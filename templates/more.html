@@ -23,7 +23,7 @@
                     }
                 </script>
             </div>
-
+            <hr>
             <div class="row">
                 <h2>Edit</h2>
             </div>
@@ -45,36 +45,41 @@
             
             <!-- QUESTS -->
             {% if quest %}
-            <div class="row">
-                <div class="form-group">
-                    <label for="name">Name | current: {{ quest[0]['name'] }}</label>
-                    <input autocomplete="off" autofocus class="form-control" id="name" name="name" placeholder="{{ quest[0]['name'] }}" type="text">            
+            <form method="post">
+                <div class="row">
+                    <div class="form-group">
+                        <label for="name">Name | current: {{ quest[0]['name'] }}</label>
+                        <input autocomplete="off" autofocus class="form-control" id="name" name="name" placeholder="{{ quest[0]['name'] }}" type="text">            
+                    </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="form-group">
-                    <label for="place">Place | current: {{ quest[0]['place_name'] }}</label>
-                    <select style="color:grey" id="place" class="form-control" name="place">
-                        <option disabled="" selected="" value="">Location</option>
-                        {% for place in places %}
-                            <option value="{{ place['name'] }}">{{ place['name'] }}</option>
-                        {% endfor %}
-                    </select>
+                <div class="row">
+                    <div class="form-group">
+                        <label for="place">Place | current: {{ quest[0]['place_name'] }}</label>
+                        <select id="place" class="form-control" name="place">
+                            <option disabled="" selected="" value="">Location</option>
+                            {% for place in places %}
+                                <option value="{{ place['name'] }}">{{ place['name'] }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="form-group">
-                    <label for="description">Description | current: {{ quest[0]['description'] }}</label>
-                    <input autocomplete="off" autofocus class="form-control" id="description" name="description" placeholder="{{ quest[0]['description'] }}" type="text">            
+                <div class="row">
+                    <div class="form-group">
+                        <label for="description">Description | current: {{ quest[0]['description'] }}</label>
+                        <input autocomplete="off" autofocus class="form-control" id="description" name="description" placeholder="{{ quest[0]['description'] }}" type="text">            
+                    </div>
+                    <!-- <div>
+                        <button class="btn btn-primary" type="submit" formaction="/more/{{ kind }}/{{ quest[0]['name'] }}/">Submit Changes</button>
+                    </div> -->
                 </div>
-            </div>
-            <br>
-            <div class="row">
-                <!-- Submit changes -->
-                <form action="/more/{{ kind }}/{{ quest[0]['name'] }}/" method="post">
-                    <button class="btn btn-primary" type="submit">Submit Changes</button>
-                </form>
-            </div>
+                <br>
+                <div class="row">
+                    <!-- Submit changes -->
+                    <form method="post" action="/more/{{ kind }}/{{ quest[0]['name'] }}/">
+                        <button class="btn btn-primary" type="submit" method="post" formaction="/more/{{ kind }}/{{ quest[0]['name'] }}/">Submit Changes</button>
+                    </form>
+                </div>
+            </form>
             <hr>
             <div class="row">
                 <!-- Delete -->

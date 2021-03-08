@@ -43,6 +43,16 @@ To provide context for database associations, original database schema are avail
 ---
 
 # TODOs
+- convert welcome.html to bs4
+- converge /delete & /more functions?
+- cange error handling to funtion rather than direct error page render (diagnostic logging)
+```
+def error(errcode, errmsg, user):
+    try: log error in db/errors or db/activity
+finally:
+    render_template("error.html", errcode=errcode, errmsg=errmsg)
+```
+
 
 ## Needed Impovements
 - Ablity to edit existing information
@@ -68,4 +78,3 @@ To provide context for database associations, original database schema are avail
 - Virtual Tabletop environment integration
 
 ## Bugs
-- convert welcome.html to bs4

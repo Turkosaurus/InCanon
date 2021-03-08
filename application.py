@@ -46,7 +46,7 @@ db = SQL(os.getenv('DATABASE_URL'))
 # conn = psycopg2.connect(DATABASE_URL, sslmode='require')
 
 """ Type Conversions """
-def ifstr(s):
+def nonone(s):
     if s is None:
         return ''
     else:
@@ -179,14 +179,17 @@ def places():
         return redirect("/places")
 
 
-#TODO improve location handling
 @app.route("/items", methods=["GET", "POST"])
 @login_required
 def items():
+
+    # Identify active campaign
+    ac_id = get_ac_id()
+
+    
     if request.method == 'GET':
 
         # Request current campaign's data
-        ac_id = get_ac_id()
         people = get_people(ac_id)
         places = get_places(ac_id)
         items = get_items(ac_id)
@@ -198,20 +201,18 @@ def items():
     # Process posted content
     else:
 
-        # Capture submitted responses
+        # Capture submitted responses, sanitize leading and trailing spaces
         name = request.form.get("name")
         name = name.strip()
         place = request.form.get("place")
         description = request.form.get("description")
-
-        # Query for active campaign
-        ac_id = get_ac_id()
+        description = description.strip()
 
         # Insert given data
-        # todo rename location to acknowledge foreign key relationship
-        db.execute("INSERT INTO items (name, campaign_id, description) \
+        # TODO rename location to acknowledge foreign key relationship
+        db.execute("INSERT INTO items (name, campaign_id, description, place_name) \
                     VALUES (:name, :ac_id, :description)",
-                    name=name, ac_id=ac_id, description=description)
+                    name=name, ac_id=ac_id, description=description, place_name=place)
 
         return redirect("/items")
 
@@ -219,11 +220,13 @@ def items():
 @app.route("/quests", methods=["GET", "POST"])
 @login_required
 def quests():
+
+    # Identify active campaign
+    ac_id = get_ac_id()
+
     if request.method == 'GET':
 
-
         # Request current campaign's data
-        ac_id = get_ac_id()
         people = get_people(ac_id)
         places = get_places(ac_id)
         items = get_items(ac_id)
@@ -241,9 +244,6 @@ def quests():
         place_name = request.form.get("place")
         description = request.form.get("description")
 
-        # Query for active campaign
-        ac_id = get_ac_id()
-
         # Insert given data
         db.execute("INSERT INTO quests (name, campaign_id, place_name, description) VALUES (:name, :ac_id, :place_name, :description)",
                     name=name, ac_id=ac_id, place_name=place_name, description=description)
@@ -253,21 +253,24 @@ def quests():
 
 """ More Detail and Deletion """
 # When top level items are clicked
-@app.route("/more/<kind>/<selection>/", methods=["GET", "POST"])
+@app.route("/more/<kind>/<selection>/", methods=["POST", "GET"])
 @login_required
 def more(kind, selection):
 
+    # Get current campaign id
+    ac_id = get_ac_id()
+
     # Display details for the chosen selection
     if request.method == 'GET':
+        print(f"GET GET GET GET GET GET GET GET GET GET GET GET ")
 
         # Request current campaign's data
-        ac_id = get_ac_id()
         people = get_people(ac_id)
         places = get_places(ac_id)
         items = get_items(ac_id)
         
-        print(kind)
-        print(selection)
+        print(f"kind:{kind}")
+        print(f"selection:{selection}")
 
         if kind == "place":
             data = db.execute("SELECT * FROM places WHERE name=:selection AND campaign_id=:ac_id", selection=selection, ac_id=ac_id)
@@ -296,9 +299,51 @@ def more(kind, selection):
         if kind == "person":
             return render_template("error.html", errcode=501, errmsg="Edit Feature Coming Soon")
         if kind == "item":
-            return render_template("error.html", errcode=501, errmsg="Edit Feature Coming Soon")
+            name = nonone(request.form.get("name"))
+            place = nonone(request.form.get("place"))
+            description = nonone(request.form.get("description"))
+
+            # Ensure permissions, reject if item not in requestor's active campaign
+            quest_campaign_id = db.execute("SELECT quest_id, campaign_id FROM quests WHERE name=:selection AND campaign_id=:ac_id", selection=selection, ac_id=ac_id)
+            qc_id = quest_campaign_id[0]['campaign_id']
+            quest_id = quest_campaign_id[0]['quest_id']
+            if ac_id != qc_id:
+                return render_template("error.html", errcode=403, errmsg="Users may only edit entries from their current campaign")
+
+            # Effect updates
+            else:
+                if name:
+                    db.execute("UPDATE quests SET name=:name WHERE quest_id=:quest_id", name=name, quest_id=quest_id)
+                if place:
+                    db.execute("UPDATE quests SET place_name=:place WHERE quest_id=:quest_id", place=place, quest_id=quest_id)
+                if description:
+                    db.execute("UPDATE quests SET description=:description WHERE quest_id=:quest_id", description=description, quest_id=quest_id)
+            return redirect("/quests")
+
         if kind == "quest":
-            return render_template("error.html", errcode=501, errmsg="Edit Feature Coming Soon")
+            name = nonone(request.form.get("name"))
+            place = nonone(request.form.get("place"))
+            description = nonone(request.form.get("description"))
+
+            # Ensure permissions, reject if item not in requestor's active campaign
+            quest_campaign_id = db.execute("SELECT quest_id, campaign_id FROM quests WHERE name=:selection AND campaign_id=:ac_id", selection=selection, ac_id=ac_id)
+            qc_id = quest_campaign_id[0]['campaign_id']
+            quest_id = quest_campaign_id[0]['quest_id']
+            if ac_id != qc_id:
+                return render_template("error.html", errcode=403, errmsg="Users may only edit entries from their current campaign")
+
+            # Effect updates
+            else:
+                if name:
+                    db.execute("UPDATE quests SET name=:name WHERE quest_id=:quest_id", name=name, quest_id=quest_id)
+                if place:
+                    db.execute("UPDATE quests SET place_name=:place WHERE quest_id=:quest_id", place=place, quest_id=quest_id)
+                if description:
+                    db.execute("UPDATE quests SET description=:description WHERE quest_id=:quest_id", description=description, quest_id=quest_id)
+            return redirect("/quests")
+
+        else:
+            return render_template("error.html", errcode=400, errmsg="A unexpected request was made.")
 
 
 @app.route("/delete/<kind>/<selection>/", methods=["POST"])
@@ -335,10 +380,8 @@ def delete(kind, selection):
         if kind == "quest":
 
             # Ensure permissions
-            print(selection)
             quest_campaign_id = db.execute("SELECT campaign_id FROM quests WHERE name=:selection", selection=selection)
             qcid = quest_campaign_id[0]['campaign_id']
-            print(f"qcid={qcid}")
             if ac_id != qcid:
                 return render_template("error.html", errcode=403, errmsg="Users may only edit entries from their current campaign")
 
@@ -348,7 +391,7 @@ def delete(kind, selection):
                 return redirect("/quests")
 
     else:
-        return render_template("error.html", errcode=403, errmsg="Method not allowed.")
+        return render_template("error.html", errcode=405, errmsg="Method not allowed.")
 
 
 # @app.route("/questedit/<int:quest>/", methods=["POST"])
@@ -510,9 +553,9 @@ def campaigns():
 
     else:
         # Capture posted values; if "None" convert to ''; else pass as str(value)
-        changecampaign = ifstr(request.form.get("change_campaign"))
-        joincampaign = ifstr(request.form.get("join_campaign"))
-        codeword_given = ifstr(request.form.get("codeword"))
+        changecampaign = nonone(request.form.get("change_campaign"))
+        joincampaign = nonone(request.form.get("join_campaign"))
+        codeword_given = nonone(request.form.get("codeword"))
 
         # Query for chosen campaign's data
         campaigns = db.execute("SELECT * FROM campaigns WHERE name=:joincampaign",joincampaign=joincampaign)
@@ -588,47 +631,6 @@ def newcampaign():
 
         # TODO have a first campaign new message how to flash here
         return redirect("/", msg=msg)
-
-
-# @app.route("/joincampaign", methods=["GET", "POST"])
-# @login_required
-# def joincampaign():
-
-#     # Allow users to submit choice to join all active campaigns
-#     if request.method == 'GET':
-#         # TODO, prevent multiple signups by only selecing campaigns someone is not in
-#         allcampaigns = db.execute("SELECT name FROM campaigns;")
-#         print(campaigns)
-#         return render_template("joincampaign.html", campaigns=campaigns)
-
-#     #
-#     else:
-#         # Store submitted data
-#         joincampaign = request.form.get("joincampaign")
-#         codeword_given = request.form.get("codeword")
-
-#         # Query database for required information
-#         campaigns = db.execute("SELECT * FROM campaigns WHERE name=:joincampaign",joincampaign=joincampaign)
-#         print(campaigns)
-
-#         # If no campaign choice is made
-#         if not joincampaign:
-#             return render_template("error.html", errcode=400, errmsg="Campaign choice required.")
-
-#         # If password is incorrect
-#         codeword_actual = campaigns[0]['codeword']
-#         if codeword_given != codeword_actual:
-#             return render_template("error.html", errcode=403, errmsg="Codeword incorrect.")
-
-#         # On success, add them to the campaign
-#         else:
-#             # Update parties to include association
-#             db.execute("INSERT INTO parties (campaign_id, user_id) VALUES (:campaign_id, :user_id)", campaign_id=campaigns[0]['campaign_id'], user_id=session["user_id"])
-
-#             # Update users to indicate active campaign
-#             db.execute("UPDATE users SET activecampaign_id=:newactive WHERE id=:user_id", newactive=campaigns[0]['campaign_id'], user_id=session["user_id"])
-#             return redirect("/")
-
 
 
 """ Miscellaneous """
