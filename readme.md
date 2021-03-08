@@ -44,7 +44,9 @@ To provide context for database associations, original database schema are avail
 
 # TODOs
 - convert welcome.html to bs4
+- standardize h1s for people, places, items
 - converge /delete & /more functions?
+- delete python print debugger statements
 - cange error handling to funtion rather than direct error page render (diagnostic logging)
 ```
 def error(errcode, errmsg, user):

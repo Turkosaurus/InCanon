@@ -294,8 +294,8 @@ def more(kind, selection):
     # Update selection
     else:
         if kind == "place":
-           description = nonone(request.form.get("description"))
-
+            description = nonone(request.form.get("description"))
+            
             # Ensure permissions, reject if thing not in requestor's active campaign
             place_campaign_id = db.execute("SELECT place_id, campaign_id FROM places WHERE name=:selection AND campaign_id=:ac_id", selection=selection, ac_id=ac_id)
             pc_id = place_campaign_id[0]['campaign_id']
@@ -308,7 +308,6 @@ def more(kind, selection):
                 if description:
                     db.execute("UPDATE places SET description=:description WHERE place_id=:place_id", description=description, place_id=place_id)
             return redirect("/places")
-
 
 
         if kind == "person":
@@ -394,22 +393,47 @@ def delete(kind, selection):
         places = get_places(ac_id)
         items = get_items(ac_id)
 
-        # TODO make for people
-        # TODO make for places
-        # TODO test items
-
-        # ITEMS
-        if kind == "items":
+        # PEOPLE
+        if kind == "person":
 
             # Ensure permissions
-            quest_campaign_id = db.execute("SELECT campaign_id FROM items WHERE name=:selection", selection=selection)
-            qcid = quest_campaign_id[0]['campaign_id']
-            if ac_id != qcid:
+            character_campaign_id = db.execute("SELECT campaign_id FROM characters WHERE name=:selection", selection=selection)
+            ccid = character_campaign_id[0]['campaign_id']
+            if ac_id != ccid:
                 return render_template("error.html", errcode=403, errmsg="Users may only edit entries from their current campaign")
 
             # Effect deletion
             else:
-                db.execute("DELETE FROM items WHERE name=:selection AND campaign_id=:quest_campaign_id", selection=selection, quest_campaign_id=qcid)
+                db.execute("DELETE FROM characters WHERE name=:selection AND campaign_id=:character_campaign_id", selection=selection, character_campaign_id=qcid)
+                return redirect("/people")    
+
+        # PLACES
+        if kind == "place":
+
+            # Ensure permissions
+            place_campaign_id = db.execute("SELECT campaign_id FROM places WHERE name=:selection", selection=selection)
+            pcid = place_campaign_id[0]['campaign_id']
+            if ac_id != pcid:
+                return render_template("error.html", errcode=403, errmsg="Users may only edit entries from their current campaign")
+
+            # Effect deletion
+            else:
+                db.execute("DELETE FROM places WHERE name=:selection AND campaign_id=:place_campaign_id", selection=selection, place_campaign_id=qcid)
+                return redirect("/places")    
+
+
+        # ITEMS
+        if kind == "item":
+
+            # Ensure permissions
+            item_campaign_id = db.execute("SELECT campaign_id FROM items WHERE name=:selection", selection=selection)
+            icid = item_campaign_id[0]['campaign_id']
+            if ac_id != icid:
+                return render_template("error.html", errcode=403, errmsg="Users may only edit entries from their current campaign")
+
+            # Effect deletion
+            else:
+                db.execute("DELETE FROM items WHERE name=:selection AND campaign_id=:item_campaign_id", selection=selection, item_campaign_id=qcid)
                 return redirect("/items")    
 
         # QUEST
@@ -428,19 +452,6 @@ def delete(kind, selection):
 
     else:
         return render_template("error.html", errcode=405, errmsg="Method not allowed.")
-
-
-# @app.route("/questedit/<int:quest>/", methods=["POST"])
-# @login_required
-# def questedit(quest):
-#     # When post request is made 
-#     if request.method == 'POST':
-#         print(quest)        
-#         return render_template("questedit.html", quest=quest)
-#     else:
-#         return render_template("error.html", errcode=420)
-
-
 
 
 """ ADMIN PAGES """
