@@ -5,43 +5,72 @@ Home
 {% endblock %}
 
 {% block main %}
-<h6>Home</h6>
-<h1>{{ campaign[0]['name'] }}</h1>
-<h6>Codeword:  {{ campaign[0]['codeword'] }}</h6>
-<br>
-<h3>Players</h3>
-<ul class="mylist">
-    {% for person in players %}
-    <li>{{ person['username'] }}</li>
-    {% endfor %}
-</ul>
-<br>
-<h3>Characters</h3>
-<ul class="mylist">
-    {% for person in people %}
-    <li>{{ person['name'] }}</li>
-    {% endfor %}
-</ul>
-<br>
-<h3>Places</h3>
-<ul class="mylist">
-    {% for place in places %}
-    <li>{{ place['name'] }}</li>
-    {% endfor %}
-</ul>
-<br>
-<h3>Items</h3>
-<ul class="mylist">
-    {% for item in items %}
-    <li>{{ item['name'] }}</li>
-    {% endfor %}
-</ul>
-<br>
-<h3>Quests</h3>
-<ul class="mylist">
-    {% for quest in quests %}
-    <li>{{ quest['name'] }}</li>
-    {% endfor %}
-</ul>
+<container>
+    <div class="row">
+        <div class="col justify-content-center">
+            <h6>Home</h6>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col justify-content-center">
+            <h1>{{ campaign[0]['name'] }}</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col justify-content-center">
+            <h6>Codeword:  {{ campaign[0]['codeword'] }}</h6>
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col-xl-3 col-md-6 justify-content-center" style="padding-bottom: 1rem;">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Players</h5>
+                    <ul class="list-group list-group-flush">
+                        {% for player in players %}
+                            <li class="list-group-item">{{ player['username'] }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>    
+        <div class="col-xl-3 col-md-6 justify-content-center" style="padding-bottom: 1rem;">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Characters</h5>
+                    <ul class="list-group list-group-flush">
+                        {% for person in people %}
+                            <li class="list-group-item">{{ person['name'] }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>    
+        <div class="col-xl-3 col-md-6 justify-content-center" style="padding-bottom: 1rem;">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Items</h5>
+                    <ul class="list-group list-group-flush">
+                        {% for item in items %}
+                            <li class="list-group-item">{{ item['name'] }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>    
+        <div class="col-xl-3 col-md-6 justify-content-center" style="padding-bottom: 1rem;">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Quests</h5>
+                    <ul class="list-group list-group-flush">
+                        {% for quest in quests %}
+                            <li class="list-group-item">{{ quest['name'] }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>    
+</container>
 
 {% endblock %}
