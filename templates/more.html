@@ -28,18 +28,133 @@
                 <h2>Edit</h2>
             </div>
 
+<!-- todo -->
             <!-- PEOPLE -->
             {% if person %}
+            <form method="post">
+                <div class="row">
+                    <div class="form-group">
+                        <label for="name">Name | current: {{ person[0]['name'] }}</label>
+                        <input autocomplete="off" autofocus class="form-control" id="name" name="name" placeholder="{{ person[0]['name'] }}" type="text">            
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <label for="place">Place | current: {{ person[0]['place_name'] }}</label>
+                        <select id="place" class="form-control" name="place">
+                            <option disabled="" selected="" value="">Location</option>
+                            {% for place in places %}
+                                <option value="{{ place['name'] }}">{{ place['name'] }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <label for="description">Description | current: {{ person[0]['description'] }}</label>
+                        <input autocomplete="off" autofocus class="form-control" id="description" name="description" placeholder="{{ person[0]['description'] }}" type="text">            
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <!-- Submit changes -->
+                    <form method="post" action="/more/{{ kind }}/{{ person[0]['name'] }}/">
+                        <button class="btn btn-primary" type="submit" method="post" formaction="/more/{{ kind }}/{{ person[0]['name'] }}/">Submit Changes</button>
+                    </form>
+                </div>
+            </form>
+            <hr>
+            <div class="row">
+                <!-- Delete -->
+                <form action="/delete/{{ kind }}/{{ person[0]['name'] }}/" method="post">
+                    <button id="delete" class="btn btn-danger" type="submit" onclick="return confirm('Delete {{ person[0]['name'] }} forever?')">
+                        Delete Permanently
+                    </button>
+                    <small id="delete" class="form-text text-muted">This action cannot be undone.</small>
+                </form>
+            </div>
             {% endif %}
 
-
+<!-- todo -->
             <!-- PLACES -->
             {% if place %}
+            <form method="post">
+                <div class="row">
+                    <div class="form-group">
+                        <p>Name | {{ place[0]['name'] }}</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <label for="description">Description | current: {{ place[0]['description'] }}</label>
+                        <input autocomplete="off" autofocus class="form-control" id="description" name="description" placeholder="{{ place[0]['description'] }}" type="text">            
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <!-- Submit changes -->
+                    <form method="post" action="/more/{{ kind }}/{{ place[0]['name'] }}/">
+                        <button class="btn btn-primary" type="submit" method="post" formaction="/more/{{ kind }}/{{ place[0]['name'] }}/">Submit Changes</button>
+                    </form>
+                </div>
+            </form>
+            <hr>
+            <div class="row">
+                <!-- Delete -->
+                <form action="/delete/{{ kind }}/{{ place[0]['name'] }}/" method="post">
+                    <button id="delete" class="btn btn-danger" type="submit" onclick="return confirm('Delete {{ place[0]['name'] }} forever?')">
+                        Delete Permanently
+                    </button>
+                    <small id="delete" class="form-text text-muted">This action cannot be undone.</small>
+                </form>
+            </div>
             {% endif %}
 
-
+<!-- todo -->
             <!-- ITEMS -->
             {% if item %}
+            <form method="post">
+                <div class="row">
+                    <div class="form-group">
+                        <label for="name">Name | current: {{ item[0]['name'] }}</label>
+                        <input autocomplete="off" autofocus class="form-control" id="name" name="name" placeholder="{{ item[0]['name'] }}" type="text">            
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <label for="place">Place | current: {{ item[0]['place_name'] }}</label>
+                        <select id="place" class="form-control" name="place">
+                            <option disabled="" selected="" value="">Location</option>
+                            {% for place in places %}
+                                <option value="{{ place['name'] }}">{{ place['name'] }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <label for="description">Description | current: {{ item[0]['description'] }}</label>
+                        <input autocomplete="off" autofocus class="form-control" id="description" name="description" placeholder="{{ item[0]['description'] }}" type="text">            
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <!-- Submit changes -->
+                    <form method="post" action="/more/{{ kind }}/{{ item[0]['name'] }}/">
+                        <button class="btn btn-primary" type="submit" method="post" formaction="/more/{{ kind }}/{{ item[0]['name'] }}/">Submit Changes</button>
+                    </form>
+                </div>
+            </form>
+            <hr>
+            <div class="row">
+                <!-- Delete -->
+                <form action="/delete/{{ kind }}/{{ item[0]['name'] }}/" method="post">
+                    <button id="delete" class="btn btn-danger" type="submit" onclick="return confirm('Delete {{ item[0]['name'] }} forever?')">
+                        Delete Permanently
+                    </button>
+                    <small id="delete" class="form-text text-muted">This action cannot be undone.</small>
+                </form>
+            </div>
             {% endif %}
 
             
@@ -68,9 +183,6 @@
                         <label for="description">Description | current: {{ quest[0]['description'] }}</label>
                         <input autocomplete="off" autofocus class="form-control" id="description" name="description" placeholder="{{ quest[0]['description'] }}" type="text">            
                     </div>
-                    <!-- <div>
-                        <button class="btn btn-primary" type="submit" formaction="/more/{{ kind }}/{{ quest[0]['name'] }}/">Submit Changes</button>
-                    </div> -->
                 </div>
                 <br>
                 <div class="row">
