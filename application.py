@@ -85,7 +85,6 @@ def index():
     # Identify user data
     user = db.execute("SELECT * FROM users WHERE id=:user_id", user_id=session["user_id"])
 
-    # TODO replace with get_campaign()?
     # Get active campaign name
     campaign = db.execute("SELECT * FROM campaigns WHERE campaign_id=:active",
                                 active=user[0]['activecampaign_id'])
@@ -110,14 +109,18 @@ def index():
         # Render campaign summary page
         return render_template("index.html", campaign=campaign, people=people, places=places, items=items, quests=quests, players=players)
 
+
 # TODO change location in db to place_name or place_id; better yet, have function to convert between them
 @app.route("/people", methods=["GET", "POST"])
 @login_required
 def people():
+
+    # Query for active campaign
+    ac_id = get_ac_id()
+
     if request.method == 'GET':
 
         # Request current campaign's data
-        ac_id = get_ac_id()
         people = get_people(ac_id)
         places = get_places(ac_id)
         items = get_items(ac_id)
@@ -135,9 +138,6 @@ def people():
         place = request.form.get("place")
         description = request.form.get("description")
 
-        # Query for active campaign
-        ac_id = get_ac_id()
-
         # Insert given data
         db.execute("INSERT INTO characters (campaign_id, name, location, description) \
                     VALUES (:ac_id, :name, :location, :description)",
@@ -149,10 +149,13 @@ def people():
 @app.route("/places", methods=["GET", "POST"])
 @login_required
 def places():
+
+    # Identify active campaign
+    ac_id = get_ac_id()
+
     if request.method == 'GET':
 
         # Request current campaign's data
-        ac_id = get_ac_id()
         people = get_people(ac_id)
         places = get_places(ac_id)
         items = get_items(ac_id)
@@ -168,9 +171,7 @@ def places():
         name = request.form.get("name")
         name = name.strip()
         description = request.form.get("description")
-
-        # Query for active campaign
-        ac_id = get_ac_id()
+        description = description.strip()
 
         # Insert given data
         db.execute("INSERT INTO places (name, campaign_id, description) VALUES (:name, :ac_id, :description)",
@@ -185,7 +186,6 @@ def items():
 
     # Identify active campaign
     ac_id = get_ac_id()
-
     
     if request.method == 'GET':
 
@@ -209,14 +209,13 @@ def items():
         description = description.strip()
 
         # Insert given data
-        # TODO rename location to acknowledge foreign key relationship
         db.execute("INSERT INTO items (name, campaign_id, description, place_name) \
-                    VALUES (:name, :ac_id, :description)",
+                    VALUES (:name, :ac_id, :description, :place_name)",
                     name=name, ac_id=ac_id, description=description, place_name=place)
 
         return redirect("/items")
 
-#TODO place name handling based on string, not id
+
 @app.route("/quests", methods=["GET", "POST"])
 @login_required
 def quests():
@@ -295,37 +294,74 @@ def more(kind, selection):
     # Update selection
     else:
         if kind == "place":
-            return render_template("error.html", errcode=501, errmsg="Edit Feature Coming Soon")
+           description = nonone(request.form.get("description"))
+
+            # Ensure permissions, reject if thing not in requestor's active campaign
+            place_campaign_id = db.execute("SELECT place_id, campaign_id FROM places WHERE name=:selection AND campaign_id=:ac_id", selection=selection, ac_id=ac_id)
+            pc_id = place_campaign_id[0]['campaign_id']
+            place_id = place_campaign_id[0]['place_id']
+            if ac_id != pc_id:
+                return render_template("error.html", errcode=403, errmsg="Users may only edit entries from their current campaign")
+
+            # Effect updates
+            else:
+                if description:
+                    db.execute("UPDATE places SET description=:description WHERE place_id=:place_id", description=description, place_id=place_id)
+            return redirect("/places")
+
+
+
         if kind == "person":
-            return render_template("error.html", errcode=501, errmsg="Edit Feature Coming Soon")
+            name = nonone(request.form.get("name"))
+            place = nonone(request.form.get("place"))
+            description = nonone(request.form.get("description"))
+
+            # Ensure permissions, reject if thing not in requestor's active campaign
+            character_campaign_id = db.execute("SELECT character_id, campaign_id FROM characters WHERE name=:selection AND campaign_id=:ac_id", selection=selection, ac_id=ac_id)
+            cc_id = character_campaign_id[0]['campaign_id']
+            character_id = character_campaign_id[0]['character_id']
+            if ac_id != cc_id:
+                return render_template("error.html", errcode=403, errmsg="Users may only edit entries from their current campaign")
+
+            # Effect updates
+            else:
+                if name:
+                    db.execute("UPDATE characters SET name=:name WHERE character_id=:character_id", name=name, character_id=character_id)
+                if place:
+                    db.execute("UPDATE characters SET place_name=:place WHERE character_id=:character_id", place=place, character_id=character_id)
+                if description:
+                    db.execute("UPDATE characters SET description=:description WHERE character_id=:character_id", description=description, character_id=character_id)
+            return redirect("/characters")
+
+
         if kind == "item":
             name = nonone(request.form.get("name"))
             place = nonone(request.form.get("place"))
             description = nonone(request.form.get("description"))
 
-            # Ensure permissions, reject if item not in requestor's active campaign
-            quest_campaign_id = db.execute("SELECT quest_id, campaign_id FROM quests WHERE name=:selection AND campaign_id=:ac_id", selection=selection, ac_id=ac_id)
-            qc_id = quest_campaign_id[0]['campaign_id']
-            quest_id = quest_campaign_id[0]['quest_id']
+            # Ensure permissions, reject if thing not in requestor's active campaign
+            item_campaign_id = db.execute("SELECT item_id, campaign_id FROM items WHERE name=:selection AND campaign_id=:ac_id", selection=selection, ac_id=ac_id)
+            ic_id = item_campaign_id[0]['campaign_id']
+            item_id = item_campaign_id[0]['item_id']
             if ac_id != qc_id:
                 return render_template("error.html", errcode=403, errmsg="Users may only edit entries from their current campaign")
 
             # Effect updates
             else:
                 if name:
-                    db.execute("UPDATE quests SET name=:name WHERE quest_id=:quest_id", name=name, quest_id=quest_id)
+                    db.execute("UPDATE items SET name=:name WHERE item_id=:item_id", name=name, item_id=item_id)
                 if place:
-                    db.execute("UPDATE quests SET place_name=:place WHERE quest_id=:quest_id", place=place, quest_id=quest_id)
+                    db.execute("UPDATE items SET place_name=:place WHERE item_id=:item_id", place=place, item_id=item_id)
                 if description:
-                    db.execute("UPDATE quests SET description=:description WHERE quest_id=:quest_id", description=description, quest_id=quest_id)
-            return redirect("/quests")
+                    db.execute("UPDATE items SET description=:description WHERE item_id=:item_id", description=description, item_id=item_id)
+            return redirect("/items")
 
         if kind == "quest":
             name = nonone(request.form.get("name"))
             place = nonone(request.form.get("place"))
             description = nonone(request.form.get("description"))
 
-            # Ensure permissions, reject if item not in requestor's active campaign
+            # Ensure permissions, reject if thing not in requestor's active campaign
             quest_campaign_id = db.execute("SELECT quest_id, campaign_id FROM quests WHERE name=:selection AND campaign_id=:ac_id", selection=selection, ac_id=ac_id)
             qc_id = quest_campaign_id[0]['campaign_id']
             quest_id = quest_campaign_id[0]['quest_id']
