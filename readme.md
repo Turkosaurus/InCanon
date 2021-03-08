@@ -44,6 +44,7 @@ To provide context for database associations, original database schema are avail
 
 # TODOs
 - convert welcome.html to bs4
+- add home page dashboard links
 - standardize h1s for people, places, items
 - converge /delete & /more functions?
 - delete python print debugger statements

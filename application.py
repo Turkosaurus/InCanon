@@ -52,6 +52,7 @@ def nonone(s):
     else:
         return str(s)
 
+
 """ Database Helper Functions """
 def get_ac_id():
     # Query for active campaign
@@ -250,6 +251,7 @@ def quests():
         return redirect("/quests")
 
 
+
 """ More Detail and Deletion """
 # When top level items are clicked
 @app.route("/more/<kind>/<selection>/", methods=["POST", "GET"])
@@ -291,7 +293,7 @@ def more(kind, selection):
             print(data)
             return render_template("more.html", kind=kind, selection=selection, people=people, places=places, items=items, quest=data)
     
-    # Update selection
+    # Update selection on POST
     else:
         if kind == "place":
             description = nonone(request.form.get("description"))
@@ -308,7 +310,6 @@ def more(kind, selection):
                 if description:
                     db.execute("UPDATE places SET description=:description WHERE place_id=:place_id", description=description, place_id=place_id)
             return redirect("/places")
-
 
         if kind == "person":
             name = nonone(request.form.get("name"))
@@ -327,11 +328,10 @@ def more(kind, selection):
                 if name:
                     db.execute("UPDATE characters SET name=:name WHERE character_id=:character_id", name=name, character_id=character_id)
                 if place:
-                    db.execute("UPDATE characters SET place_name=:place WHERE character_id=:character_id", place=place, character_id=character_id)
+                    db.execute("UPDATE characters SET location=:place WHERE character_id=:character_id", place=place, character_id=character_id)
                 if description:
                     db.execute("UPDATE characters SET description=:description WHERE character_id=:character_id", description=description, character_id=character_id)
-            return redirect("/characters")
-
+            return redirect("/people")
 
         if kind == "item":
             name = nonone(request.form.get("name"))
@@ -342,7 +342,7 @@ def more(kind, selection):
             item_campaign_id = db.execute("SELECT item_id, campaign_id FROM items WHERE name=:selection AND campaign_id=:ac_id", selection=selection, ac_id=ac_id)
             ic_id = item_campaign_id[0]['campaign_id']
             item_id = item_campaign_id[0]['item_id']
-            if ac_id != qc_id:
+            if ac_id != ic_id:
                 return render_template("error.html", errcode=403, errmsg="Users may only edit entries from their current campaign")
 
             # Effect updates
@@ -404,7 +404,7 @@ def delete(kind, selection):
 
             # Effect deletion
             else:
-                db.execute("DELETE FROM characters WHERE name=:selection AND campaign_id=:character_campaign_id", selection=selection, character_campaign_id=qcid)
+                db.execute("DELETE FROM characters WHERE name=:selection AND campaign_id=:character_campaign_id", selection=selection, character_campaign_id=ccid)
                 return redirect("/people")    
 
         # PLACES
@@ -418,7 +418,7 @@ def delete(kind, selection):
 
             # Effect deletion
             else:
-                db.execute("DELETE FROM places WHERE name=:selection AND campaign_id=:place_campaign_id", selection=selection, place_campaign_id=qcid)
+                db.execute("DELETE FROM places WHERE name=:selection AND campaign_id=:place_campaign_id", selection=selection, place_campaign_id=pcid)
                 return redirect("/places")    
 
 
@@ -433,7 +433,7 @@ def delete(kind, selection):
 
             # Effect deletion
             else:
-                db.execute("DELETE FROM items WHERE name=:selection AND campaign_id=:item_campaign_id", selection=selection, item_campaign_id=qcid)
+                db.execute("DELETE FROM items WHERE name=:selection AND campaign_id=:item_campaign_id", selection=selection, item_campaign_id=icid)
                 return redirect("/items")    
 
         # QUEST
@@ -452,6 +452,7 @@ def delete(kind, selection):
 
     else:
         return render_template("error.html", errcode=405, errmsg="Method not allowed.")
+
 
 
 """ ADMIN PAGES """
@@ -680,6 +681,7 @@ def newcampaign():
         return redirect("/", msg=msg)
 
 
+
 """ Miscellaneous """
 @app.route("/feedback", methods=["GET", "POST"])
 def feedback():
@@ -696,10 +698,12 @@ def feedback():
                     feedback=feedback)
         return render_template("thankyou.html")
 
+
 @app.route("/help", methods=["GET"])
 def help():
     if request.method == 'GET':
         return render_template("help.html")
+
 
 @app.route("/about")
 def about():
@@ -758,17 +762,17 @@ def errorhandler(e):
     if not isinstance(e, HTTPException):
         e = InternalServerError()
 
-    # Set error variables and store in db
-    errcode=e.code
-    errmsg=e.name
+    # # Set error variables and store in db
+    # errcode=e.code
+    # errmsg=e.name
 
-    # Log some errors in db
-    userwerr=db.execute("SELECT username FROM users where id=:user_id", user_id=session['user_id'])
-    db.execute("INSERT INTO errors (code, message, userwerr) \
-                            VALUES (:errcode, :errmsg, :userwerr)", \
-                            errcode=errcode, errmsg=errmsg, userwerr=userwerr)
+    # # Log some errors in db
+    # userwerr=db.execute("SELECT username FROM users where id=:user_id", user_id=session['user_id'])
+    # db.execute("INSERT INTO errors (code, message, userwerr) \
+    #                         VALUES (:errcode, :errmsg, :userwerr)", \
+    #                         errcode=errcode, errmsg=errmsg, userwerr=userwerr[0]['username'])
 
-    return render_template("error.html", errcode=errcode, errmsg=errmsg)
+    # return render_template("error.html", errcode=errcode, errmsg=errmsg)
 
 # Listen for errors
 for code in default_exceptions:
