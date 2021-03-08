@@ -43,11 +43,11 @@ To provide context for database associations, original database schema are avail
 ---
 
 # TODOs
+
+## In Development
 - convert welcome.html to bs4
-- add home page dashboard links
-- standardize h1s for people, places, items
-- converge /delete & /more functions?
-- delete python print debugger statements
+- delete archived html files
+- delete `application.py` print debugger statements
 - cange error handling to funtion rather than direct error page render (diagnostic logging)
 ```
 def error(errcode, errmsg, user):
@@ -55,15 +55,9 @@ def error(errcode, errmsg, user):
 finally:
     render_template("error.html", errcode=errcode, errmsg=errmsg)
 ```
-
-
-## Needed Impovements
-- Ablity to edit existing information
-    1. quests
-    2. people
-    3. the rest
-- delete archived html files
 - translate place names to place ids in all handling
+- hotlink whole homepage
+- filter homepage by current location by...?
 
 ## Upcoming & Feature Requests
 - add "notes" appendations to exisiting "description"
