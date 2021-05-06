@@ -53,6 +53,28 @@ def nonone(s):
         return str(s)
 
 
+""" Misc Helper Functions """
+def loginuser():
+    # Query database for username
+    rows = db.execute("SELECT * FROM users WHERE username = :username",
+                        username=request.form.get("username"))
+
+    # Ensure username exists
+    if len(rows) != 1:
+        return render_template("register.html", errmsg="Username not found.")
+
+    # Ensure username exists and password is correct
+    if not check_password_hash(rows[0]["hash"], request.form.get("password")):
+        return render_template("error.html", errcode=403, errmsg="Incorrect password.")
+
+    # Remember which user has logged in
+    session["user_id"] = rows[0]["id"]
+
+    # Store login timestamp
+    db.execute("INSERT INTO activity (user_id, action) VALUES (:user_id, :action)", user_id=session["user_id"], action="login")
+
+
+
 """ Database Helper Functions """
 def get_ac_id():
     # Query for active campaign
@@ -492,10 +514,12 @@ def register():
         # Check if username is already taken
         if not db.execute("SELECT username FROM users WHERE username LIKE (?)", username):
 
-            # Add the username
+            # Add the username and login user
             db.execute("INSERT INTO users (username, hash) VALUES (:username, :hashedpass)",
                         username=username, hashedpass=hashedpass)
-            return redirect("/")
+            loginuser()
+            allcampaigns=db.execute("SELECT name FROM campaigns")
+            return render_template('welcome.html', allcampaigns=allcampaigns)
 
         else:
             return render_template("error.html", errcode=403, errmsg="Username invalid or already taken.")
@@ -519,25 +543,8 @@ def login():
         elif not request.form.get("password"):
             return render_template("error.html", errcode=400, errmsg="Password required.")
 
-        # Query database for username
-        rows = db.execute("SELECT * FROM users WHERE username = :username",
-                          username=request.form.get("username"))
-
-        # Ensure username exists
-        if len(rows) != 1:
-            return render_template("register.html", errmsg="Username not found.")
-
-        # Ensure username exists and password is correct
-        if not check_password_hash(rows[0]["hash"], request.form.get("password")):
-            return render_template("error.html", errcode=403, errmsg="Incorrect password.")
-
-        # Remember which user has logged in
-        session["user_id"] = rows[0]["id"]
-
-        # Store login timestamp
-        db.execute("INSERT INTO activity (user_id, action) VALUES (:user_id, :action)", user_id=session["user_id"], action="login")
-
-
+        # Login user
+        loginuser()
 
         # Redirect user to home page
         return redirect("/")
@@ -592,7 +599,8 @@ def campaigns():
 
         # If user has no active campaign, redirect to welcome
         if not active:
-            return render_template("welcome.html", users=users)
+            allcampaigns=db.execute("SELECT name FROM campaigns")
+            return render_template('welcome.html', allcampaigns=allcampaigns, users=users)
 
         # Go to campaign selection screen
         else:
@@ -678,7 +686,7 @@ def newcampaign():
                     campaign_id=campaign_id, user_id=session["user_id"])
 
         # TODO have a first campaign new message how to flash here
-        return redirect("/", msg=msg)
+        return redirect("/")
 
 
 
